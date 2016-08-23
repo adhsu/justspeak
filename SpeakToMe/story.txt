@@ -1,0 +1,11 @@
+1: (narrator) The forest was dark and creaky. To the left, you hear a noise as a small figure in a hood emerges. [3,4,5]
+2: (rrh) Hello! My name is Red Riding Hood and I am lost on my way home. Do you think you could help? [3,4,5]
+3: (response) You have a very unusual name. -> 6
+4: (response) I definitely can help you. Where do you want to go? -> 6
+5: (response) I am actually headed back towards the village now. You can come with. -> 6
+6: (rrh) Silly! That isn't my real name but it is the name that everyone calls me by. My real name is Sarah. [7,8,9]
+7: (response) Nice to meet you, Sarah. I would love to help you, but I am actually headed to my job and I am running late! -> 10
+8: (response) I can call the police for you. -> 10
+9: (response) This is a trap, isn't it?' -> 10
+10: (rrh) Well, where do you work? -> 11
+11: (narrator) You set off and the girl darts quickly in an attempt to keep up with you.
