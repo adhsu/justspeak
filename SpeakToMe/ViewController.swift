@@ -8,13 +8,17 @@
 
 import UIKit
 import Speech
+import AVFoundation
 
-public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
+
+public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAudioPlayerDelegate {
   // MARK: Properties
   private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
   private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
   private var recognitionTask: SFSpeechRecognitionTask?
   private let audioEngine = AVAudioEngine()
+  private var player: AVAudioPlayer!
+  
   
   private var r1Translate : CGFloat?
   private var r2Translate : CGFloat?
@@ -81,6 +85,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     response1.textContainerInset = UIEdgeInsets(top: responsePadding, left: responsePadding, bottom: responsePadding, right: responsePadding)
     response2.textContainerInset = UIEdgeInsets(top: responsePadding, left: responsePadding, bottom: responsePadding, right: responsePadding)
     response3.textContainerInset = UIEdgeInsets(top: responsePadding, left: responsePadding, bottom: responsePadding, right: responsePadding)
+    
     response1.textContainer.lineFragmentPadding = 0
     response2.textContainer.lineFragmentPadding = 0
     response3.textContainer.lineFragmentPadding = 0
@@ -99,6 +104,54 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     // construct self.nodes dictionary
     constructNodesDict(dataArr)
     // print(nodes)
+    
+    
+  }
+  
+  func playAudio(node: Node) {
+    print("play audio")
+    let filename = "sample2.mp3"
+    // play audio
+    let audioPath = Bundle.main.path(forResource: filename, ofType: nil)!
+    let url = NSURL(fileURLWithPath: audioPath)
+    
+    do {
+      print("doing this shit")
+      self.player = try AVAudioPlayer(contentsOf: url as URL)
+      player.prepareToPlay()
+      player.delegate = self
+      player.volume = 1.0
+      player.play()
+      
+    } catch {
+      print("could not create AVAudioPlayer \(error)")
+    }
+    
+  }
+  
+  public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+    print("finished playing \(flag)")
+    
+    if let node = self.nodes[self.currentNodeId] {
+      
+      if node.next != nil { // if node has a `next`
+        self.nextNode(node: node)
+      } else if let responses = node.responses { // if responses, show them
+        print("stm: current node \(self.currentNodeId), showing responses \(responses)")
+        self.setResponses(responses)
+        
+      } else {
+        self.stopListeningLoop()
+      }
+      
+    }
+    
+  }
+  
+  public func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
+    if let e = error {
+      print("\(e.localizedDescription)")
+    }
   }
   
   
@@ -172,48 +225,36 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   
   private func startListeningLoop() throws {
     
-    // print("--diagnostic--")
-    // print(self.recognitionRequest)
-    // print(self.recognitionTask)
-    // print(audioEngine.inputNode)
-    // print("----")
-    
     self.recordingStopped = false
-    // Cancel the previous task if it's running.
+    var completedMatch = false
+    var crossedThreshold = false
+    var randomChatterIdx: Int = 0 // up to this index is random chatter in bestGuess
+
+    // set up audioSession
+    let audioSession = AVAudioSession.sharedInstance()
+    do {
+      try audioSession.setCategory(AVAudioSessionCategoryRecord)
+      try audioSession.setMode(AVAudioSessionModeMeasurement)
+      try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
+    } catch {
+      print("audioSession properties weren't set because of an error.")
+    }
+
+    // set up recognition request & audio input node
+    recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+    guard let recognitionRequest = recognitionRequest else { fatalError("Unable to created a SFSpeechAudioBufferRecognitionRequest object") }
+    recognitionRequest.shouldReportPartialResults = true
+
+    guard let inputNode = audioEngine.inputNode else { fatalError("Audio engine has no input node") }
+    
+    
+    // set up recognition task. cancel previous if running.
     if let recognitionTask = recognitionTask {
       print("cancelling recognitionTask")
       recognitionTask.cancel()
       self.recognitionTask = nil
     }
-    
-    var completedMatch = false
-    var crossedThreshold = false
-    var randomChatterIdx: Int = 0 // we think up to this index is random chatter in the bestGuess
-    
-    let audioSession = AVAudioSession.sharedInstance()
-    try audioSession.setCategory(AVAudioSessionCategoryRecord)
-    try audioSession.setMode(AVAudioSessionModeMeasurement)
-    try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
-    recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-    guard let inputNode = audioEngine.inputNode else { fatalError("Audio engine has no input node") }
-    guard let recognitionRequest = recognitionRequest else { fatalError("Unable to created a SFSpeechAudioBufferRecognitionRequest object") }
-    
-    // Configure request so that results are returned before audio recording is finished
-    recognitionRequest.shouldReportPartialResults = true
-    
-    print(self.recognitionRequest)
-    print(self.recognitionTask)
-    print(inputNode)
-    
-    func advance(node: Node) {
-      
-      self.currentNodeId = node.id // advance currentNode forward
-      self.stopListeningLoop()
 
-      self.responseSelectedByAudio(node: node)
-      // self.playResponse()
-    }
-    
     // A recognition task represents a speech recognition session.
     // We keep a reference to the task so that it can be cancelled.
     recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest) { result, error in
@@ -233,7 +274,8 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             
             if highestMatch.matchCount < matchCount { // this new dialog option is the best match so far
               highestMatch = (idx, matchCount)
-              print("new highest match: \(responseNode.text)")
+              print("new highest match idx \(idx)")
+              // print("new highest match: \(responseNode.text)")
             }
           }
           if highestMatch.matchCount == 0 {
@@ -261,7 +303,9 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                   print("triggering delayed advance, should only happen once***********")
                   self.delay(seconds: 2.0) {
                     if !completedMatch {
-                      advance(node: highlightedResponseNode)
+
+                      self.responseSelectedByAudio(node: highlightedResponseNode)
+
                     }
                   }
                   crossedThreshold = true
@@ -271,7 +315,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                   print("match over 95%, setting completedMatch to true, should only happen once***********")
                   completedMatch = true
                   self.setResponseHighlight(responseIdx: highestMatch.index!, count: dialogCount)
-                  advance(node: highlightedResponseNode)
+                  self.responseSelectedByAudio(node: highlightedResponseNode)
                 }
                 
               }
@@ -289,10 +333,9 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         }
           
         if error != nil || isFinal {
-          print("okay error or isfinal")
-          print(error)
-          self.audioEngine.stop()
+          print("recognition Task: isFinal \(isFinal), error \(error)")
           
+          self.audioEngine.stop()
           self.recognitionRequest = nil
           self.recognitionTask = nil
           
@@ -300,21 +343,20 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         }
       }
     } 
-    print("installing tap on inputnode")
     
+    // set up inputNode, add it to recognition request. ok to do this after starting recognitionTask.
+    print("install tap on inputNode")
     let recordingFormat = inputNode.outputFormat(forBus: 0)
     inputNode.removeTap(onBus: 0)
     inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
       self.recognitionRequest?.append(buffer)
     }
 
-    print("dope. now preparing/starting audioengine")
+    // start audioEngine
+    print("start audioEngine")
     recordingStatusLight.backgroundColor = self.greenColor
-
     audioEngine.prepare()
     try audioEngine.start()
-    
-    
     
   }
   
@@ -322,21 +364,17 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     print("stopListeningLoop()")
     self.recordingStopped = true
     self.recordingStatusLight.backgroundColor = self.grayColor
+
     self.audioEngine.stop()
+    
     self.recognitionRequest?.endAudio()
+    self.recognitionRequest = nil
+
+    self.recognitionTask?.cancel()
+    self.recognitionTask = nil
+
   }
   
-  @objc private func delayedAction() {
-    // print("delay")
-    // print("proceed to next dialog")
-    try! self.startListeningLoop()
-  }
-  
-  private func playResponse() {
-    // var timer = NSTimer()
-    // print("this is when the NPC responds")
-    Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(delayedAction), userInfo: nil, repeats: false)
-  }
 
   public func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
     print("setting recordButton back to 'start recording'")
@@ -352,7 +390,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   // view functions
   func addStoryView(node: Node) {
     print("stm: addStoryView, node id \(node.id)")
-    let spaceBetween: CGFloat = 20.0
+    let spaceBetween: CGFloat = 25.0
     
     let textView = StoryTextView(text: node.text, speaker: node.speaker)
     
@@ -404,6 +442,9 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   }
   
   func animateInStoryView(_ view: StoryTextView, _ node: Node) {
+    
+    
+    
     // animate in
     UIView.animate(
       withDuration: 0.5,
@@ -413,23 +454,22 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         view.alpha = 1.0
       },
       completion: {_ in
-        
-        // after the new message shows in the story, either go to next or show responses
-        if node.next != nil { // if node has a `next`
+        print("animating in node id \(node.id)")
+        // self.playAudio(node: node) // on completion, either go next node, set responses, or stop listening loop (at end)
+        if let node = self.nodes[self.currentNodeId] {
           
-          // go to next node after a delay
-          self.delay(seconds: 1.0) {
+          if node.next != nil { // if node has a `next`
             self.nextNode(node: node)
+          } else if let responses = node.responses { // if responses, show them
+            print("stm: current node \(self.currentNodeId), showing responses \(responses)")
+            self.setResponses(responses)
+            
+          } else {
+            self.stopListeningLoop()
           }
           
-          
-        } else if let responses = node.responses { // if responses, show them
-          print("stm: current node \(self.currentNodeId), showing responses \(responses)")
-          self.setResponses(responses)
-
-        } else {
-          self.stopListeningLoop()
         }
+        
         
     })
   }
@@ -490,6 +530,10 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
   func setResponses(_ responses: [Int]) {
     
+    // start listening immediately, then animate responses in
+    try! self.startListeningLoop()
+
+
     let response1Node = nodes[responses[0]]!
     let response2Node = nodes[responses[1]]!
     let response3Node = nodes[responses[2]]!
@@ -530,9 +574,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         self.response1.frame.origin.y -= self.r1Translate!
         self.recordingStatusLight.alpha = 1
       }, 
-      completion: {_ in
-          
-      })
+      completion: nil)
     
     
     UIView.animate(
@@ -554,30 +596,27 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
       animations: {
         self.response3.frame.origin.y -= self.r3Translate!
       }, 
-      completion: {_ in
-        try! self.startListeningLoop()
-      })
+      completion: nil)
     
 
   }
   
   func nextNode(node: Node) {
     print("stm: currently on node \(self.currentNodeId), going to next!")
-    
-    self.delay(seconds: 0.0) {
-      if let nextNode = self.nodes[node.next!] {
-        
-        self.addStoryView(node: nextNode) // add storyView
-        self.currentNodeId = node.next! // set current node id
-        print("stm: current node id is \(self.currentNodeId)")
-      }
+    if let nextNode = self.nodes[node.next!] {
       
+      self.addStoryView(node: nextNode) // add storyView
+      self.currentNodeId = node.next! // set current node id
+      print("stm: current node id is \(self.currentNodeId)")
     }
-    
+
   }
 
   
   func responseSelectedByAudio(node: Node) {
+
+    self.currentNodeId = node.id // advance currentNode forward
+    self.stopListeningLoop()
 
     self.recordingStatusLight.alpha = 0
 
@@ -673,9 +712,13 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
           default:
             ()
         }
-        
+
+
         if let responseNode = self.nodes[responseId] {
           // add response to story
+          self.currentNodeId = responseId // advance currentNode forward
+          self.stopListeningLoop()
+
           self.addStoryView(node: responseNode)
         }
         
