@@ -1,4 +1,4 @@
-1: (NARRATOR) You are in a busy and crowded train station. It is full of people trying to go somewhere. Amongst the busyness, there is a family dressed in slightly peculiar robes. There are two sons, JAMES POTTER and ALBUS POTTER, who are pushing two overflowing carts. Their mother, GINNY, follows after. A thirty-seven-year-old man, HARRY, has his daughter, LILY, on his shoulders. -> 12
+1: (NARRATOR) You are in a busy and crowded train station. It is full of people trying to go somewhere. Amongst the busyness, there is a family dressed in slightly peculiar robes. There are two sons, JAMES POTTER and ALBUS POTTER, who are pushing two overflowing carts. Their mother, GINNY, follows after. A thirty-seven-year-old man, HARRY, has his daughter, LILY, on his shoulders. [13,14,15]
 12: (Ginny) We'll write to you every day ALBUS! [13,14,15]
 13: (ALBUS) No. Not every day. James says most people only get letters from home about once a month. -> 16
 14: (ALBUS) You better! -> 16
@@ -9,7 +9,7 @@
 19: (ALBUS) I can't believe I actually get to go to Hogwarts. -> 22
 20: (ALBUS) I don't know...maybe I should just wait until next year. -> 21
 21: (NARRATOR) HARRY pretends he didn't hear you... -> 22
-22: (HARRY) Ok, let's do this! Remember don't stop and don't be scared you'll crash into it, that's very important. Best do it at a run if you're nervous. [23]
+22: (HARRY) Ok, let's do this! Remember don't stop and don't be scared you'll crash into it, that's very important. Best do it at a run if you're nervous. -> 23
 23: (ALBUS) I'm ready. -> 25
 25: (NARRATOR) HARRY and LILY put their hands on ALBUS's cart -- GINNY joins JAME's trolley -- together, the family runs hard into the barrier. -> 27
 27: (TITLE) ACT ONE, SCENE TWO -- PLATFORM NINE AND THREE-QUARTERS -> 32
