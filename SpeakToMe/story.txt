@@ -1,4 +1,4 @@
-1: (NARRATOR) You are in a busy and crowded train station. It is full of people trying to go somewhere. Amongst the hustle and bustle, two large cages rattle on top of two overflowing trolleys. They're being pushed by two boys, JAMES POTTER and ALBUS POTTER. Their mother, GINNY, follows after. A thirty-seven-year-old man, HARRY, has his daughter, LILY, on his shoulders. -> 12
+1: (NARRATOR) You are in a busy and crowded train station. It is full of people trying to go somewhere. Amongst the hustle and bustle, two large cages rattle on top of two overflowing trolleys. They're being pushed by two boys, JAMES POTTER and ALBUS POTTER. Their mother, GINNY, follows after. A thirty-seven-year-old man, HARRY, has his daughter, LILY, on his shoulders. -> 109
 12: (Ginny) We'll write to you every day ALBUS! [13,14,15]
 13: (ALBUS) No. Not every day. James says most people only get letters from home about once a month. -> 16
 14: (ALBUS) You better! -> 16
@@ -25,7 +25,7 @@
 45: (NARRATOR) You start to get anxious when you think about the sorting hat's decision tonight. You pull on HARRY's robes. HARRY looks down. -> 47
 47: (ALBUS) Do you think I...What if I am put in Slytherin? -> 48
 48: (HARRY) And what would be wrong with that? [49, 50, 51]
-49: (ALBUS) Slytherin is the House of the snake, of Dark Magic . . . It’s not a House of brave wizards. -> 52
+49: (ALBUS) Slytherin is the House of the snake, of Dark Magic . . . It's not a House of brave wizards. -> 52
 50: (ALBUS) But Potters are supposed to be in Gryffindor. -> 52
 51: (ALBUS) Everyone knows that Slytherins are evil!-> 52
 52: (HARRY) Albus Severus, you were named after two headmasters of Hogwarts. One of them was a Slytherin and he was probably the bravest man I ever knew. [53,54,55]
@@ -40,7 +40,7 @@
 63: (TITLE) ACT ONE, SCENE THREE -- The HOGWARTS EXPRESS -> 67
 67: (NARRATOR) You walk along the carriage of the train with Rose. The TROLLEY WITCH approaches, pushing her trolley.  -> 71
 71: (TROLLEY WITCH) Anything from the trolley, dears? Pumpkin Pasty? Chocolate Frog? Cauldron Cake? -> 72
-72: (ROSE): {spotting ALBUS’s loving look at the Chocolate Frogs} Albus. We need to concentrate. -> 73
+72: (ROSE) {spotting ALBUS's loving look at the Chocolate Frogs} Albus. We need to concentrate. -> 73
 73: (ALBUS) Concentrate on what? -> 74
 74: (ROSE) On who we choose to be friends with.  -> 79
 75: (ALBUS) Agreed! What candy should we eat first? -> 76
@@ -48,16 +48,16 @@
 77: (ALBUS) Yeah, I'm not exactly feeling sweets right now either. -> 78
 78: (ROSE) Who do you want to be friends with? -> 79
 79: (ROSE) My mum and dad met your dad on their first Hogwarts Express, you know . . . [80,81,82]
-80: (ALBUS) So we need to choose now who to be friends with for life? That’s quite scary. -> 83
+80: (ALBUS) So we need to choose now who to be friends with for life? That's quite scary. -> 83
 81: (ALBUS) Yeah but they also met a bunch of other people I'm sure. -> 83
 82: (ALBUS) One step at a time Rose. Let's just focus on getting to Hogwarts and then we can talk to people. -> 83
-83: (ROSE) Come on. I’m a Granger-Weasley, you’re a Potter — everyone will want to be friends with us, we’ve got the pick of anyone we want. -> 84
+83: (ROSE) Come on. I'm a Granger-Weasley, you're a Potter — everyone will want to be friends with us, we've got the pick of anyone we want. -> 84
 84: (ALBUS) So how do we decide which compartment to go in . . . -> 86
 85: (ALBUS) How do you suggest we decide who to be friends with then. -> 86
 86: (ROSE) We rate them all and then we make a decision. -> 89
 87: (ALBUS) Let's just find a compartment and sit in it like everyone else. -> 89
 89: (NARRATOR) You open the compartment door in front of you and see a lonely blond kid in an otherwise empty compartment. The boy smiles invitingly.  -> 91
-91: (NARRATOR) the cabin opens with a soft sound, revealing a single blonde headed boy sitting alone [93,94,95]
+91: (NARRATOR) The cabin opens with a soft sound, revealing a single blonde headed boy sitting alone. [93,94,95]
 93: (ALBUS) Hi. Is this compartment open? -> 96
 94: (ALBUS) Hey - what's your name? -> 97
 95: (ALBUS) Hi I'm the son of Harry Potter. -> 98
@@ -74,19 +74,19 @@
 106: (ROSE) Albus, actually we should get going pretty soon to the next cabin. -> 107
 107: (SCORPIUS) But wait - I haven't even offered you some of my Fizzing Whizbees yet. Would you like one? -> 108
 108: (ROSE) I've just had breakfast, thanks. -> 109
-109: (SCORPIUS) I’ve also got some Shock-o-Choc, Pepper Imps, and some Jelly Slugs. Mum’s idea — she says:, “Sweets, they always help you make friends.” {He realizes that singing was a mistake.} Stupid idea, probably. [110, 111, 112]
+109: (SCORPIUS) I've also got some Shock-o-Choc, Pepper Imps, and some Jelly Slugs. Mum's idea — she says, "Sweets, they always help you make friends." {He realizes that singing was a mistake.} Stupid idea, probably. [110, 111, 112]
 110: (ALBUS) That honestly all sounds really terrible. Have any banana bread? -> 116
 111: (ALBUS) I'll have some...Mum doesn't let me have sweets. Which one would you start with? -> 117
 112: (ALBUS) Oh wow. Definitely want to try the Pepper Imps! -> 114
-114: (NARRATOR) Rose hits you out of sight of SCORPUS -> 118
+114: (NARRATOR) Rose hits you out of sight of SCORPIUS -> 118
 116: (SCORPIUS) Um...nope just have the sweets. I thought all kids like Sweets. [120,121,122]
 117: (SCORPIUS) Easy. -> 118
-118: (SCORPIUS) I’ve always regarded the Pepper Imp as the king of the confectionery bag. They’re peppermint sweets that make you smoke at the ears. [121, 122, 123]
+118: (SCORPIUS) I've always regarded the Pepper Imp as the king of the confectionery bag. They're peppermint sweets that make you smoke at the ears. [121, 122, 123]
 120: (ALBUS) I'm just kidding. I will take a Pepper Imp! -> 125
 121: (ALBUS) Actually, come to think of it, we really should be headed to the next train car. -> 168
 122: (ALBUS) Awesome. Rose you should really try one. -> 125
 123: (ALBUS) Brilliant. Could I have a Pepper Imp please? -> 125
-125: (ROSE) {Rose hits you out of sight of SCORPUS} We really must be going. [126,127,128]
+125: (ROSE) {Rose hits you out of sight of SCORPIUS} We really must be going. [126,127,128]
 126: (ALBUS) Rose, will you please stop hitting me? -> 129
 127: (ALBUS) Oh...yeah I guess you are right Rose. Thanks anyway Scorpius. We must be off. -> 168
 128: (ALBUS) Rose, I'm serious. You've probably never had a sweet in your life but they are really delicious. -> 182
@@ -138,7 +138,7 @@
 177: (ALBUS) Well that was awkward. Hopefully he can find some friends.  -> 179
 178: (ALBUS) That guy gave me the creeps! -> 179
 179: (ROSE) Yeah let's just forget about it. I hope the next cabin has some Griffindors in it.  -> 195
-182: (ROSE) Albus, I honestly wonder what goes on inside your head sometimes. Come on, let's go [183,184,185]
+182: (ROSE) Albus, I honestly wonder what goes on inside your head sometimes. Come on, let's go. [183,184,185]
 183: (ALBUS) Rose, you're better than this.  -> 186
 184: (ALBUS) I guess we should move on but I still don't think you're right. -> 168
 185: (ALBUS) I think you should really reconsider. -> 186
@@ -154,7 +154,7 @@
 199: (NARRATOR) It is time for you to be sorted into one of the four Houses of Hogwarts. You are filled with a mix of dread and excitement. -> 201
 201: (HEADMASTER) Will the next student, Albus Potter, please come to the front of the stage to be sorted. -> 203
 203: (NARRATOR) There is a not so hushed murmur as the famous last name is recognized universally throughout the hall as you walk up to the sorting hat. -> 205
-205: (SORTING HAT) Ahh, another Potter. Always an...interesting challenge. -> 207
+205: (SORTING HAT) Ahh, another Potter. Always an...interesting challenge. [207,208,209]
 207: (ALBUS) Please just put me in Griffindor. -> 210
 208: (ALBUS) Make it quick please. -> 211
 209: (ALBUS) What is challenging about my family? We've always gone to Griffindor. -> 212
