@@ -840,7 +840,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
       } else if let responseIdx = message.range(of: "[") { // check for responses
         // extract responses array
         let responses = message.substring(from: responseIdx.upperBound).trimmingCharacters(in: CharacterSet.init(charactersIn: "[]")).components(separatedBy: ",")
-        let responsesArr = responses.map { Int($0)! }
+        let responsesArr = responses.map { Int($0.trimmingCharacters(in: CharacterSet.whitespaces))! }
         // print("stm: got responses: \(responses)")
         
         // extract message + speaker

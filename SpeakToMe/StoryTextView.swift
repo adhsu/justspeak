@@ -35,11 +35,13 @@ class StoryTextView: UITextView {
     // self.layer.borderWidth = 1.0
     
     switch self.style {
-      case "narrator":
+      case "NARRATOR":
         self.font = UIFont(name: "Georgia-Italic", size: 16.0)
-      case "rrh":
+      case "SCORPIUS":
         self.textColor = UIColor(red:0.58, green:0.16, blue:0.16, alpha:1.0) // #932828, dark red
-      case "response":
+    case "ROSE":
+      self.textColor = UIColor(red:0.58, green:0.16, blue:0.16, alpha:1.0) // #932828, dark red
+      case "ALBUS":
         self.textColor = UIColor(red:0.00, green:0.00, blue:0.00, alpha:1.0)
       
       default:

@@ -12,7 +12,7 @@
 22: (HARRY) Ok, let's do this! Remember don't stop and don't be scared you'll crash into it, that's very important. Best do it at a run if you're nervous. -> 23
 23: (ALBUS) I'm ready. -> 25
 25: (NARRATOR) HARRY and LILY put their hands on ALBUS's trolley -- GINNY joins JAME's trolley -- together, the family runs hard into the barrier. -> 27
-27: (TITLE) ACT ONE, SCENE TWO -- PLATFORM NINE AND THREE-QUARTERS -> 32
+27: (TITLE) ACT ONE, SCENE TWO: PLATFORM NINE AND THREE-QUARTERS -> 32
 32: (NARRATOR) Instead of people in sharp suits going about their day, the platform is now full of wizards and witches in robes mostly trying to work out how to say good-bye to their beloved children. [34,35,36]
 34: (ALBUS) Wow, this is it. Platform nine and three-quarters. -> 37
 35: (ALBUS) Mom, I am really thinking we might want to wait a year... -> 37
@@ -149,7 +149,7 @@
 190: (ALBUS) Rose do you want anything? -> 193
 191: (ALBUS) Yeah one of everything please! -> 193
 193: (NARRATOR) You start talking with Scorpius and realize he is actually a really nice kid. In fact, he is a bit of a geek. Rose stays for most of the trip but eventually moves on. -> 195
-195: (TITLE) ACT ONE SCENE FOUR -- Hogwarts Great Hall -> 197
+195: (TITLE) ACT ONE SCENE FOUR: Hogwarts Great Hall -> 197
 197: (NARRATOR) You are now in the Great Hall of Hogwarts for the first time in your life. You've heard many stories of its grandness but are blown away by wonder all the same. -> 199
 199: (NARRATOR) It is time for you to be sorted into one of the four Houses of Hogwarts. You are filled with a mix of dread and excitement. -> 201
 201: (HEADMASTER) Will the next student, Albus Potter, please come to the front of the stage to be sorted. -> 203
@@ -185,4 +185,4 @@
 234: (SORTING HAT) Ok...I have come to my decision. I think you will come to appreciate it in time-- SLYTHERIN! -> 238
 235: (SORTING HAT) Veeeery Interesting. As you wish, SLYTHERIN it is! -> 238
 236: (SORTING HAT) Haha! I see you have a sense of humor that was never present in your father. And for that, I decide SLYTHERIN!  -> 238
-238: (NARRATOR) A deafening silence immediately sweeps across the Hall instead of the usual applause. Slowly, some of the Slytherins process the news and slowly start to clap and gesture for you to come join them.
+238: (NARRATOR) A deafening silence immediately sweeps across the Hall instead of the usual applause. Slowly, some of the Slytherins process the news and slowly start to clap and gesture for you to come join them. 
