@@ -22,7 +22,7 @@
 41: (LILY) Uncle Ron. Uncle Ron!!! -> 42
 42: (NARRATOR) RON turns towards them as LILY goes barreling up to him. He picks her up into his arms. -> 43
 43: (RON) If it isn't my favorite Potter. -> 45
-45: (NARRATOR) You start to get anxious when you think about the sorting hat's decision tonight. You pull on HARRY's robes. HARRY looks down. -> 46
+45: (NARRATOR) You start to get anxious when you think about the sorting hat's decision tonight. You pull on HARRY's robes. HARRY looks down. -> 47
 47: (ALBUS) Do you think I...What if I am put in Slytherin? -> 48
 48: (HARRY) And what would be wrong with that? [49, 50, 51]
 49: (ALBUS) Slytherin is the House of the snake, of Dark Magic . . . It’s not a House of brave wizards. -> 52

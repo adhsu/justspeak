@@ -10,21 +10,24 @@ import UIKit
 
 class StoryTextView: UITextView {
 
-  var style: String = "hi"
   var id: Int = 1
   
-  convenience init(style: String) {
+  convenience init(text: String, speaker: String) {
     self.init(frame: CGRect.zero, textContainer: nil)
-    self.style = style
+    
+    let attrString = NSMutableAttributedString(
+      string: text,
+      attributes: [
+        NSFontAttributeName: UIFont(name: "Georgia", size: 16.0)!,
+        NSForegroundColorAttributeName: UIColor(red:0.00, green:0.00, blue:0.00, alpha:1.0)
+      ])
     
     // standard attributes
-    self.font = UIFont(name: "Georgia", size: 16.0)
-    self.textColor = UIColor(red:0.00, green:0.00, blue:0.00, alpha:1.0)
     self.backgroundColor = UIColor.clear
+    
     self.isEditable = false
     self.isSelectable = false
     self.isScrollEnabled = false
-    
     
     // remove padding
     self.textContainerInset = UIEdgeInsets.zero
@@ -34,19 +37,54 @@ class StoryTextView: UITextView {
     // self.layer.borderColor = UIColor(red:0.00, green:0.00, blue:0.00, alpha:0.25).cgColor
     // self.layer.borderWidth = 1.0
     
-    switch self.style {
-      case "NARRATOR":
-        self.font = UIFont(name: "Georgia-Italic", size: 16.0)
-      case "SCORPIUS":
-        self.textColor = UIColor(red:0.58, green:0.16, blue:0.16, alpha:1.0) // #932828, dark red
-    case "ROSE":
-      self.textColor = UIColor(red:0.58, green:0.16, blue:0.16, alpha:1.0) // #932828, dark red
-      case "ALBUS":
-        self.textColor = UIColor(red:0.00, green:0.00, blue:0.00, alpha:1.0)
-      
-      default:
-        () // do nothing
+    let narratorPs: NSMutableParagraphStyle = NSMutableParagraphStyle()
+    narratorPs.lineSpacing = 8
+    narratorPs.headIndent = 15
+    narratorPs.firstLineHeadIndent = 15
+    
+    let ps: NSMutableParagraphStyle = NSMutableParagraphStyle()
+    ps.lineSpacing = 6
+    ps.headIndent = 15
+    
+    switch speaker.lowercased() {
+      case "narrator":
+        attrString.addAttributes([
+          NSParagraphStyleAttributeName: narratorPs,
+          NSFontAttributeName: UIFont(name: "Georgia-Italic", size: 14.0)!
+        ], range: NSMakeRange(0, attrString.length))
+        
+      case "albus": // user
+        
+        let name = NSMutableAttributedString(
+          string: "YOU: ",
+          attributes: [
+            NSFontAttributeName: UIFont(name: "Georgia", size: 12.0)!
+          ])
+        name.append(attrString)
+        attrString.replaceCharacters(in: NSMakeRange(0, attrString.length), with: name)
+        
+        attrString.addAttributes([
+          NSForegroundColorAttributeName: UIColor(red:11/255.0, green:116/255.0, blue:57/255.0, alpha:1.0),
+          NSParagraphStyleAttributeName: ps
+          ], range: NSMakeRange(0, attrString.length))
+
+      default: // case "ginny", "harry", "james", "rose", "scorpius", "lily", "sorting hat":
+        let name = NSMutableAttributedString(
+          string: "\(speaker.uppercased()): ",
+          attributes: [
+            NSFontAttributeName: UIFont(name: "Georgia", size: 12.0)!
+          ])
+        name.append(attrString)
+        attrString.replaceCharacters(in: NSMakeRange(0, attrString.length), with: name)
+        
+        attrString.addAttributes([
+          NSParagraphStyleAttributeName: ps
+          ], range: NSMakeRange(0, attrString.length))
+        
     }
+    
+    self.attributedText = attrString
+    
   }
   
   override init(frame: CGRect, textContainer: NSTextContainer?) {
