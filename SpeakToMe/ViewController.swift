@@ -490,17 +490,37 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
   func setResponses(_ responses: [Int]) {
     
-    let response1Node = nodes[responses[0]]!
-    let response2Node = nodes[responses[1]]!
-    let response3Node = nodes[responses[2]]!
     
-    response1.attributedText = createAttrString(text: response1Node.text)
-    response2.attributedText = createAttrString(text: response2Node.text)
-    response3.attributedText = createAttrString(text: response3Node.text)
-    
-    response1.id = response1Node.id
-    response2.id = response2Node.id
-    response3.id = response3Node.id
+    for (idx, response) in responses.enumerated() {
+      if let responseNode = self.nodes[response] {
+        
+        let attrString = createAttrString(text: responseNode.text)
+        let id = responseNode.id
+        
+        switch idx {
+          case 0:
+            response1.attributedText = attrString
+            response1.id = id
+            r1Translate = self.view.frame.size.height - response1.frame.origin.y
+            response1.frame.origin.y += r1Translate!
+          
+          case 1:
+            response2.attributedText = attrString
+            response2.id = id
+            r2Translate = self.view.frame.size.height - response2.frame.origin.y
+            response2.frame.origin.y += r2Translate!
+          
+          case 2:
+            response3.attributedText = attrString
+            response3.id = id
+            r3Translate = self.view.frame.size.height - response3.frame.origin.y
+            response3.frame.origin.y += r3Translate!
+          default:
+            ()
+        }
+        
+      }
+    }
     
     responseStack.isHidden = false
     recordingStatusLight.isHidden = false
@@ -509,15 +529,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     recordingStatusLight.alpha = 0
     
     
-    // animate responses in
-    r1Translate = self.view.frame.size.height - response1.frame.origin.y
-    r2Translate = self.view.frame.size.height - response2.frame.origin.y
-    r3Translate = self.view.frame.size.height - response3.frame.origin.y
-
-    response1.frame.origin.y += r1Translate!
-    response2.frame.origin.y += r2Translate!
-    response3.frame.origin.y += r3Translate!
- 
+    self.recordingStatusLight.alpha = 1
     
     UIView.animate(
       withDuration: 0.5,
@@ -528,7 +540,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
       animations: {
         
         self.response1.frame.origin.y -= self.r1Translate!
-        self.recordingStatusLight.alpha = 1
+        
       }, 
       completion: {_ in
           
