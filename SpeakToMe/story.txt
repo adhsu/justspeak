@@ -33,14 +33,14 @@
 54: (ALBUS) I guess you're right Dad. -> 56
 55: (ALBUS) I don't care about Snape! I just want to be a Gryffindor. -> 56
 56: (HARRY) Remember, the sorting hat is there for a reason. You are going to love Hogwarts so much. -> 57
-57: (LILY) Albus, if you don't want this train to leave without you, you should probably leap on! -> 58
+57: (HARRY) Albus, if you don't want this train to leave without you, you should probably leap on! -> 58
 58: (HERMIONE) Rose. Remember to send Neville our love. -> 59
 59: (ROSE) Mom, I can't give a professor love! -> 61
 61: (NARRATOR) Rose exits for the train. Your hug your family one last time before following after her. -> 63
 63: (TITLE) ACT ONE, SCENE THREE -- The HOGWARTS EXPRESS -> 67
 67: (NARRATOR) You walk along the carriage of the train with Rose. The TROLLEY WITCH approaches, pushing her trolley.  -> 71
 71: (TROLLEY WITCH) Anything from the trolley, dears? Pumpkin Pasty? Chocolate Frog? Cauldron Cake? -> 72
-72: (ROSE) {spotting ALBUS's loving look at the Chocolate Frogs} Albus. We need to concentrate. -> 73
+72: (ROSE) {spotting ALBUS's loving look at the Chocolate Frogs} Albus. We need to concentrate.  [73,75,77]
 73: (ALBUS) Concentrate on what? -> 74
 74: (ROSE) On who we choose to be friends with.  -> 79
 75: (ALBUS) Agreed! What candy should we eat first? -> 76
@@ -54,9 +54,8 @@
 83: (ROSE) Come on. I'm a Granger-Weasley, you're a Potter — everyone will want to be friends with us, we've got the pick of anyone we want. [84,85,87]
 84: (ALBUS) So how do we decide which compartment to go in . . . -> 86
 85: (ALBUS) How do you suggest we decide who to be friends with then. -> 86
-86: (ROSE) We rate them all and then we make a decision. -> 89
-87: (ALBUS) Let's just find a compartment and sit in it like everyone else. -> 89
-89: (NARRATOR) You open the compartment door in front of you and see a lonely blond kid in an otherwise empty compartment. The boy smiles invitingly.  -> 91
+86: (ROSE) We rate them all and then we make a decision. -> 91
+87: (ALBUS) Let's just find a compartment and sit in it like everyone else. -> 91
 91: (NARRATOR) The cabin opens with a soft sound, revealing a single blonde headed boy sitting alone. [93,94,95]
 93: (ALBUS) Hi. Is this compartment open? -> 96
 94: (ALBUS) Hey - what's your name? -> 97
@@ -102,7 +101,7 @@
 138: (ALBUS) What do you mean you know who I am? -> 141
 139: (ALBUS) I hate being the son of the most famous Wizard in the world. -> 141
 140: (ALBUS) How could it possibly matter who you are? It's the first day of school! -> 141
-141: (SCORPIUS) You're Albus Potter. She's Rose Granger-Weasley. And I am Scorpius Malfoy. My parents are Astoria and Draco Malfor. Our parents - they didn't like each other. -> 142
+141: (SCORPIUS) You're Albus Potter. She's Rose Granger-Weasley. And I am Scorpius Malfoy. My parents are Astoria and Draco Malfoy. Our parents - they didn't like each other. -> 142
 142: (ROSE) That's putting it mildly. Your mum and dad are Death Eaters! -> 143
 143: (Scorpius) {affronted} Dad was but Mum wasn't! -> 144
 144: (ROSE) Your father and his goons were responsible for many of our parents closest friend's deaths! That's not something to just forgive so easily. -> 145
@@ -137,7 +136,7 @@
 176: (ALBUS) Maybe we shouldn't have been so harsh. Poor guy.  -> 179
 177: (ALBUS) Well that was awkward. Hopefully he can find some friends.  -> 179
 178: (ALBUS) That guy gave me the creeps! -> 179
-179: (ROSE) Yeah let's just forget about it. I hope the next cabin has some Griffindors in it.  -> 195
+179: (ROSE) Yeah let's just forget about it. I hope the next cabin has some Gryffindors in it.  -> 195
 182: (ROSE) Albus, I honestly wonder what goes on inside your head sometimes. Come on, let's go. [183,184,185]
 183: (ALBUS) Rose, you're better than this.  -> 186
 184: (ALBUS) I guess we should move on but I still don't think you're right. -> 168
