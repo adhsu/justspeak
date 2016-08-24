@@ -31,6 +31,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   @IBOutlet var response3 : ResponseTextView!
   
   @IBOutlet weak var recordingStatus: UILabel!
+  @IBOutlet weak var recordingStatusLight: UIView!
 
   class Node {
     var id: Int
@@ -53,10 +54,8 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   }
   
   var currentNodeId: Int = 1
-  var currentNode: Node? {
-    print("stm: recalculating currentNode")
-    return self.nodes[self.currentNodeId]
-  }
+  
+  
   var nodes: [Int: Node] = [:] // dictionary of nodes, will construct in viewDidLoad
   var recordingStopped: Bool = false
 
@@ -72,8 +71,6 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     recordButton.isEnabled = false
     textView.isHidden = true // hide transcript view, not needed right now
     
-    
-    
     // set up response padding
     let responsePadding: CGFloat = 20.0
     response1.textContainerInset = UIEdgeInsets(top: responsePadding, left: responsePadding, bottom: responsePadding, right: responsePadding)
@@ -82,6 +79,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     
     // set responses off screen to animate onscreen in viewDidAppear()
     responseStack.isHidden = true
+    recordingStatusLight.isHidden = true
     
     // read story.txt from file
     var dataArr: [String] = []
@@ -95,7 +93,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     }
     // construct self.nodes dictionary
     constructNodesDict(dataArr)
-    print(nodes)
+    // print(nodes)
   }
   
   
@@ -110,6 +108,10 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     // called after sizes (frames/bounds/etc) calculated. views already laid out by autolayout. handle anything dependent on bounds here.
     print("stm: viewDidLayoutSubviews()")
     super.viewDidLayoutSubviews()
+    
+    // set up response status light radius
+    recordingStatusLight.layer.cornerRadius = recordingStatusLight.frame.size.width/2
+    recordingStatusLight.clipsToBounds = true
     
   }
   
@@ -210,24 +212,23 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   private func matchScore(bestGuess: String, node: Node) -> Int {
     // Fuzzy match between transcription and children
     var count: Int = 0
-    let splitDialog: Array = node.text.characters.split{$0 == " "}.map(String.init)
-    var realWordsDialog = [String]()
-    for word in splitDialog {
-      if word.characters.count > 3 {
-        realWordsDialog.append(word)
-      }
-    }
-    count = realWordsDialog.filter({ (bestGuess.lowercased().range(of: $0.lowercased()) != nil) }).count
+    let splitResponse: Array = node.text.characters.split{$0 == " "}.map(String.init) // list of words in the response text
+    let realResponseWords = splitResponse.filter { $0.characters.count >= 3 } // filter to words >= 4 chars in length
+    
+    count = realResponseWords.filter({ (bestGuess.lowercased().range(of: $0.lowercased()) != nil) }).count // count real words that are in bestGuess
+    // print("bestGuess \(bestGuess), node text \(node.text), count is \(count)")
     return count
   }
-    
+  
+  
   private func startListeningLoop() throws {
-      
-    print("--diagnostic--")
-    print(self.recognitionRequest)
-    print(self.recognitionTask)
-    print(audioEngine.inputNode)
-    print("----")
+    
+    // print("--diagnostic--")
+    // print(self.recognitionRequest)
+    // print(self.recognitionTask)
+    // print(audioEngine.inputNode)
+    // print("----")
+    
     self.recordingStopped = false
     // Cancel the previous task if it's running.
     if let recognitionTask = recognitionTask {
@@ -238,6 +239,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     
     var completedMatch = false
     var crossedThreshold = false
+    var randomChatterIdx: Int = 0 // we think up to this index is random chatter in the bestGuess
     
     let audioSession = AVAudioSession.sharedInstance()
     try audioSession.setCategory(AVAudioSessionCategoryRecord)
@@ -246,57 +248,64 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
     guard let inputNode = audioEngine.inputNode else { fatalError("Audio engine has no input node") }
     guard let recognitionRequest = recognitionRequest else { fatalError("Unable to created a SFSpeechAudioBufferRecognitionRequest object") }
+    
     // Configure request so that results are returned before audio recording is finished
     recognitionRequest.shouldReportPartialResults = true
     recordingStatus.text = "Recording..."
+    recordingStatusLight.backgroundColor = UIColor.green
+
     
     print(self.recognitionRequest)
     print(self.recognitionTask)
     print(inputNode)
-
+    
+    func advance(node: Node) {
+      inputNode.removeTap(onBus: 0)
+      // advance currentNode forward
+      self.currentNodeId = node.id
+      self.responseSelectedByAudio(node: node)
+      self.stopListeningLoop()
+      self.playResponse()
+    }
+    
     // A recognition task represents a speech recognition session.
     // We keep a reference to the task so that it can be cancelled.
     recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest) { result, error in
       if !self.recordingStopped { // if we're recording
         var isFinal = false
-            
-        // we have a new transcription result 
+        
         if let result = result, let currentNode = self.nodes[self.currentNodeId] {
           let bestGuess = result.bestTranscription.formattedString
-          print("best guess is... " + bestGuess)
+          print("best guess: \(bestGuess)")
+          
           var highestMatch: (index: Int?, matchCount: Int) = (nil, 0)
-          // iterate through all children and rank matchScores
+          
+          // iterate through all responses and rank matchScores
           for (idx, responseId) in (currentNode.responses?.enumerated())! {
-            // matchScore is the total number of words we've matched
             let responseNode = self.nodes[responseId]!
-            let matchCount = self.matchScore(bestGuess: bestGuess, node: responseNode)
-            // this new dialog option is the best match so far
-            if highestMatch.matchCount < matchCount {
+            let matchCount = self.matchScore(bestGuess: bestGuess, node: responseNode) // matchScore is the total number of words we've matched
+            
+            if highestMatch.matchCount < matchCount { // this new dialog option is the best match so far
               highestMatch = (idx, matchCount)
-              print(responseNode.text)
+              print("new highest match: \(responseNode.text)")
             }
           }
-              
-          if highestMatch.matchCount > 0 {
-            
+          if highestMatch.matchCount == 0 {
+            print("no matches yet, bestGuess is \(bestGuess)")
+            randomChatterIdx = bestGuess.characters.count-1 // if no match yet, assume everything is random chatter.
+
+          } else if highestMatch.matchCount >= 2 {
+            print("at least 2 matches. random chatter index is \(randomChatterIdx)")
             let responseNodeId = currentNode.responses?[highestMatch.index!]
             if let highlightedResponseNode: Node = self.nodes[responseNodeId!] {
-              print("new highlight: " + highlightedResponseNode.text)
+              // print("new highlight: " + highlightedResponseNode.text)
               // if our transcript length is approaching the length of the best guess dialog option, move along the dialog
               let dialogCount: Int = highlightedResponseNode.text.characters.count
-              let transcriptCount = bestGuess.characters.count
+              let transcriptCount = bestGuess.characters.count - randomChatterIdx
               
               print("dialog chars: \(dialogCount), transcript chars: \(transcriptCount)")
               self.setResponseHighlight(responseIdx: highestMatch.index!, count: min(dialogCount, transcriptCount))
               
-              func advance() {
-                inputNode.removeTap(onBus: 0)
-                // advance currentNode forward
-                self.currentNodeId = responseNodeId!
-                self.responseSelectedByAudio(node: highlightedResponseNode)
-                self.stopListeningLoop()
-                self.playResponse()
-              }
               
               let completionPercentage: Float = Float(transcriptCount)/Float(dialogCount)
               if completionPercentage > 0.75 {
@@ -304,22 +313,20 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 
                 if !crossedThreshold {
                   print("triggering delayed advance, should only happen once***********")
-                  self.delay(seconds: 5.0) {
+                  self.delay(seconds: 2.0) {
                     if !completedMatch {
-                      advance()
+                      advance(node: highlightedResponseNode)
                     }
                   }
                   crossedThreshold = true
                 }
                 
-                
                 if !completedMatch && completionPercentage > 0.95 {
                   print("match over 95%, setting completedMatch to true, should only happen once***********")
                   completedMatch = true
                   self.setResponseHighlight(responseIdx: highestMatch.index!, count: dialogCount)
-                  advance()
+                  advance(node: highlightedResponseNode)
                 }
-                
                 
               }
               // if self.currentNode.children[highestMatch.index!].dialog.characters.count/bestGuess.characters.count > 0.8 {
@@ -365,8 +372,11 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     print("dope. now preparing/starting audioengine")
     audioEngine.prepare()
     try audioEngine.start()
-  }
     
+    
+    
+  }
+  
   private func stopListeningLoop() {
     self.recordingStopped = true
     self.recordingStatus.text = "Not recording"
@@ -376,14 +386,14 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   }
   
   @objc private func delayedAction() {
-    print("delay")
-    print("proceed to next dialog")
+    // print("delay")
+    // print("proceed to next dialog")
     try! self.startListeningLoop()
   }
   
   private func playResponse() {
     // var timer = NSTimer()
-    print("this is when the NPC responds")
+    // print("this is when the NPC responds")
     Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(delayedAction), userInfo: nil, repeats: false)
   }
 
@@ -471,7 +481,10 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         if node.next != nil { // if node has a `next`
           
           // go to next node after a delay
-          self.nextNode(node: node)
+          self.delay(seconds: 1.0) {
+            self.nextNode(node: node)
+          }
+          
           
         } else if let responses = node.responses { // if responses, show them
           print("stm: current node \(self.currentNodeId), showing responses \(responses)")
@@ -498,7 +511,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   
 
   func setResponseHighlight(responseIdx: Int, count: Int) {
-    print("set response highlight: idx \(responseIdx) count \(count)")
+    // print("set response highlight: idx \(responseIdx) count \(count)")
     let greenColor = UIColor(red:0.00, green:158/255.0, blue:84/255.0, alpha:1.0)
     let range = NSMakeRange(0, count)
     
@@ -510,6 +523,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
           value: greenColor,
           range: range)
         
+
         response1.attributedText = newAttrString
       case 1:
         let newAttrString = NSMutableAttributedString(attributedString: response2.attributedText)
@@ -547,8 +561,11 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     response3.id = response3Node.id
     
     responseStack.isHidden = false
+    recordingStatusLight.isHidden = false
+
+    // initially hidden to animate in
+    recordingStatusLight.alpha = 0
     
-    // self.view.layoutIfNeeded()
     
     // animate responses in
     
@@ -570,8 +587,11 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
       animations: {
         
         self.response1.frame.origin.y -= self.r1Translate!
-        
-      }, completion: nil)
+        self.recordingStatusLight.alpha = 1
+      }, 
+      completion: {_ in
+          
+      })
     
     
     UIView.animate(
@@ -599,7 +619,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   
   func nextNode(node: Node) {
     print("stm: currently on node \(self.currentNodeId), going to next!")
-    // currentNodeId starts from 1
+    
     self.delay(seconds: 0.0) {
       if let nextNode = self.nodes[node.next!] {
         
@@ -678,6 +698,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
       completion: {_ in
         
         self.responseStack.isHidden = true // hide responses
+        self.recordingStatusLight.isHidden = true
         
         // reset heights
         self.response1.frame.origin.y -= self.r1Translate!
@@ -721,6 +742,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
       completion: {_ in
         
         self.responseStack.isHidden = true // hide responses
+        self.recordingStatusLight.isHidden = true
         
         // reset heights
         self.response1.frame.origin.y -= self.r1Translate!
@@ -765,10 +787,9 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     }
     
     // add first node to view
-    addStoryView(node: self.currentNode!)
-    // if let node = self.nodes[self.currentNodeId] {
-    //   addStoryView(node: node)
-    // }
+    if let node = self.nodes[self.currentNodeId] {
+      addStoryView(node: node)
+    }
   }
 
   

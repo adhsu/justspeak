@@ -1,11 +1,188 @@
-1: (narrator) The forest was dark and creaky. To the left, you hear a noise as a small figure in a hood emerges. [3,4,5]
-2: (rrh) Hello! My name is Red Riding Hood and I am lost on my way home. Do you think you could help? [3,4,5]
-3: (response) You have a very unusual name. -> 6
-4: (response) I definitely can help you. Where do you want to go? -> 6
-5: (response) I am actually headed back towards the village now. You can come with. -> 6
-6: (rrh) Silly! That isn't my real name but it is the name that everyone calls me by. My real name is Sarah. [7,8,9]
-7: (response) Nice to meet you, Sarah. I would love to help you, but I am actually headed to my job and I am running late! -> 10
-8: (response) I can call the police for you. -> 10
-9: (response) This is a trap, isn't it?' -> 10
-10: (rrh) Well, where do you work? -> 11
-11: (narrator) You set off and the girl darts quickly in an attempt to keep up with you.
+1: (NARRATOR) You are in a busy and crowded train station. It is full of people trying to go somewhere. Amongst the hustle and bustle, two large cages rattle on top of two overflowing trolleys. They're being pushed by two boys, JAMES POTTER and ALBUS POTTER. Their mother, GINNY, follows after. A thirty-seven-year-old man, HARRY, has his daughter, LILY, on his shoulders. -> 12
+12: (Ginny) We'll write to you every day ALBUS! [13,14,15]
+13: (ALBUS) No. Not every day. James says most people only get letters from home about once a month. -> 16
+14: (ALBUS) You better! -> 16
+15: (ALBUS) Mom, I'm 12 years old now. I'm no longer a little kid. -> 16
+16: (HARRY) We wrote to your brother three times a week last year. Don't believe everything your brother says about Hogwarts, Albus. -> 17
+17: (JAMES) Can we go now please? [18,19,20]
+18: (ALBUS) Yes, I can't wait to get on that train! -> 22
+19: (ALBUS) Can we really just run through this wall? -> 22
+20: (ALBUS) I don't know...maybe I should just wait until next year. -> 21
+21: (NARRATOR) HARRY pretends he didn't hear you... -> 22
+22: (HARRY) Ok, let's do this! Remember don't stop and don't be scared you'll crash into it, that's very important. Best do it at a run if you're nervous. -> 23
+23: (ALBUS) I'm ready. -> 25
+25: (NARRATOR) HARRY and LILY put their hands on ALBUS's trolley -- GINNY joins JAME's trolley -- together, the family runs hard into the barrier. -> 27
+27: (TITLE) ACT ONE, SCENE TWO -- PLATFORM NINE AND THREE-QUARTERS -> 32
+32: (NARRATOR) Instead of people in sharp suits going about their day, the platform is now full of wizards and witches in robes mostly trying to work out how to say good-bye to their beloved children. [34,35,36]
+34: (ALBUS) Wow, this is it. Platform nine and three-quarters. -> 37
+35: (ALBUS) Mom, I am really thinking we might want to wait a year... -> 37
+36: (ALBUS) I see Uncle Ron! -> 37
+37: (LILY) Where are they? Are they here? Maybe they didn't come? -> 39
+39: (NARRATOR) HARRY points out RON, HERMIONE, and their daughter, ROSE. LILY runs hard up to them. -> 41
+41: (LILY) Uncle Ron. Uncle Ron!!! -> 42
+42: (NARRATOR) RON turns towards them as LILY goes barreling up to him. He picks her up into his arms. -> 43
+43: (RON) If it isn't my favorite Potter. -> 45
+45: (NARRATOR) You start to get anxious when you think about the sorting hat's decision tonight. You pull on HARRY's robes. HARRY looks down. -> 46
+47: (ALBUS) Do you think I...What if I am put in Slytherin? -> 48
+48: (HARRY) And what would be wrong with that? [49, 50, 51]
+49: (ALBUS) Slytherin is the House of the snake, of Dark Magic . . . It’s not a House of brave wizards. -> 52
+50: (ALBUS) But Potters are supposed to be in Gryffindor. -> 52
+51: (ALBUS) Everyone knows that Slytherins are evil!-> 52
+52: (HARRY) Albus Severus, you were named after two headmasters of Hogwarts. One of them was a Slytherin and he was probably the bravest man I ever knew. [53,54,55]
+53: (ALBUS) I know the sorting hat will take into account how I feel. -> 56
+54: (ALBUS) I guess you're right Dad. -> 56
+55: (ALBUS) I don't care about Snape! I just want to be a Gryffindor. -> 56
+56: (HARRY) Remember, the sorting hat is there for a reason. You are going to love Hogwarts so much. -> 57
+57: (LILY) Albus, if you don't want this train to leave without you, you should probably leap on! -> 58
+58: (HERMIONE) Rose. Remember to send Neville our love. -> 59
+59: (ROSE) Mom, I can't give a professor love! -> 61
+61: (NARRATOR) Rose exits for the train. Your hug your family one last time before following after her. -> 63
+63: (TITLE) ACT ONE, SCENE THREE -- The HOGWARTS EXPRESS -> 67
+67: (NARRATOR) You walk along the carriage of the train with Rose. The TROLLEY WITCH approaches, pushing her trolley.  -> 71
+71: (TROLLEY WITCH) Anything from the trolley, dears? Pumpkin Pasty? Chocolate Frog? Cauldron Cake? -> 72
+72: (ROSE): {spotting ALBUS’s loving look at the Chocolate Frogs} Albus. We need to concentrate. -> 73
+73: (ALBUS) Concentrate on what? -> 74
+74: (ROSE) On who we choose to be friends with.  -> 79
+75: (ALBUS) Agreed! What candy should we eat first? -> 76
+76: (ROSE) Not that! We need to choose who to be friends with.  -> 79
+77: (ALBUS) Yeah, I'm not exactly feeling sweets right now either. -> 78
+78: (ROSE) Who do you want to be friends with? -> 79
+79: (ROSE) My mum and dad met your dad on their first Hogwarts Express, you know . . . [80,81,82]
+80: (ALBUS) So we need to choose now who to be friends with for life? That’s quite scary. -> 83
+81: (ALBUS) Yeah but they also met a bunch of other people I'm sure. -> 83
+82: (ALBUS) One step at a time Rose. Let's just focus on getting to Hogwarts and then we can talk to people. -> 83
+83: (ROSE) Come on. I’m a Granger-Weasley, you’re a Potter — everyone will want to be friends with us, we’ve got the pick of anyone we want. -> 84
+84: (ALBUS) So how do we decide which compartment to go in . . . -> 86
+85: (ALBUS) How do you suggest we decide who to be friends with then. -> 86
+86: (ROSE) We rate them all and then we make a decision. -> 89
+87: (ALBUS) Let's just find a compartment and sit in it like everyone else. -> 89
+89: (NARRATOR) You open the compartment door in front of you and see a lonely blond kid in an otherwise empty compartment. The boy smiles invitingly.  -> 91
+91: (NARRATOR) the cabin opens with a soft sound, revealing a single blonde headed boy sitting alone [93,94,95]
+93: (ALBUS) Hi. Is this compartment open? -> 96
+94: (ALBUS) Hey - what's your name? -> 97
+95: (ALBUS) Hi I'm the son of Harry Potter. -> 98
+96: (SCORPIUS) Hi! Yeah it's just me in here. My name's Scorpius! Who are you? [100,101,102]
+97: (SCORPIUS) My name is Scorpius. What about you? [100,101,102]
+98: (SCORPIUS) Oh...um. Hi Scorpius. I mean, I'm Scorpius. You're Albus. I'm Scorpius. And you must be... -> 99
+99: (ROSE) Rose. -> 106
+100: (ALBUS) You can call me Albus. -> 104
+101: (ALBUS) Oh, don't worry about my name. -> 103
+102: (ALBUS) It's a pleasure to meet you. I'm Albus. -> 104
+103: (ROSE) Don't listen to him. His name is Albus and I'm Rose. -> 106
+104: (SCORPIUS) And who is your friend? -> 105
+105: (ROSE) My name's Rose. -> 106
+106: (ROSE) Albus, actually we should get going pretty soon to the next cabin. -> 107
+107: (SCORPIUS) But wait - I haven't even offered you some of my Fizzing Whizbees yet. Would you like one? -> 108
+108: (ROSE) I've just had breakfast, thanks. -> 109
+109: (SCORPIUS) I’ve also got some Shock-o-Choc, Pepper Imps, and some Jelly Slugs. Mum’s idea — she says:, “Sweets, they always help you make friends.” {He realizes that singing was a mistake.} Stupid idea, probably. [110, 111, 112]
+110: (ALBUS) That honestly all sounds really terrible. Have any banana bread? -> 116
+111: (ALBUS) I'll have some...Mum doesn't let me have sweets. Which one would you start with? -> 117
+112: (ALBUS) Oh wow. Definitely want to try the Pepper Imps! -> 114
+114: (NARRATOR) Rose hits you out of sight of SCORPUS -> 118
+116: (SCORPIUS) Um...nope just have the sweets. I thought all kids like Sweets. [120,121,122]
+117: (SCORPIUS) Easy. -> 118
+118: (SCORPIUS) I’ve always regarded the Pepper Imp as the king of the confectionery bag. They’re peppermint sweets that make you smoke at the ears. [121, 122, 123]
+120: (ALBUS) I'm just kidding. I will take a Pepper Imp! -> 125
+121: (ALBUS) Actually, come to think of it, we really should be headed to the next train car. -> 168
+122: (ALBUS) Awesome. Rose you should really try one. -> 125
+123: (ALBUS) Brilliant. Could I have a Pepper Imp please? -> 125
+125: (ROSE) {Rose hits you out of sight of SCORPUS} We really must be going. [126,127,128]
+126: (ALBUS) Rose, will you please stop hitting me? -> 129
+127: (ALBUS) Oh...yeah I guess you are right Rose. Thanks anyway Scorpius. We must be off. -> 168
+128: (ALBUS) Rose, I'm serious. You've probably never had a sweet in your life but they are really delicious. -> 182
+129: (ROSE) I'm not hitting you. [130,131,132]
+130: (ALBUS) What? Oh I must have imagined it then. Hey Scorpius, Rose and I actually have to leave. -> 168
+131: (ALBUS) You *are* hitting me. And it hurts. -> 133
+132: (ALBUS) Look, Rose, you can say anything you want in front of Scorpius. -> 133
+133: (SCORPIUS) She's hitting you because of me. [134,135,136]
+134: (ALBUS) What do you mean? -> 137
+135: (ALBUS) Just because of who your parents are? -> 141
+136: (ALBUS) Wait you guys know each other already? -> 137
+137: (SCORPIUS) Listen, I know who you are, so it's probably only fair you know who I am. [138,139,140]
+138: (ALBUS) What do you mean you know who I am? -> 141
+139: (ALBUS) I hate being the son of the most famous Wizard in the world. -> 141
+140: (ALBUS) How could it possibly matter who you are? It's the first day of school! -> 141
+141: (SCORPIUS) You're Albus Potter. She's Rose Granger-Weasley. And I am Scorpius Malfoy. My parents are Astoria and Draco Malfor. Our parents - they didn't like each other. -> 142
+142: (ROSE) That's putting it mildly. Your mum and dad are Death Eaters! -> 143
+143: (Scorpius) {affronted} Dad was but Mum wasn't! -> 144
+144: (ROSE) Your father and his goons were responsible for many of our parents closest friend's deaths! That's not something to just forgive so easily. -> 145
+145: (ROSE) Come on Albus, we should probably sit somewhere else. [146,147,148]
+146: (ALBUS) No, Rose. I think I'll stay here actually. You go if you want. -> 149
+147: (ALBUS) Rose, come on. We're not our parents and neither is Scorpius. You have to give everyone a chance. -> 182
+148: (ALBUS) Yeah let's go. Sorry Scorpius, nothing personal but we have to keep moving. -> 168
+149: (ROSE) Albus, I won't wait. [150, 151, 152]
+150: (ALBUS) And I wouldn't expect you to. I'm staying here though. -> 153
+151: (ALBUS) Ugh, you're right. Ok, let's move on. -> 168
+152: (ALBUS) Go ahead but I really think you shouldn't write someone off before you even know them. -> 182
+153: (ROSE) Fine! -> 154
+154: (NARRATOR) Rose looks at you for a second and then leaves the compartment. -> 155
+155: (NARRATOR) You are left alone in the cabin with Scorpius alone. You both look at each other unsure of what to do next. ->156
+156: (SCORPIUS) Thank you. [157, 158, 159]
+157: (ALBUS) Oh, I didn't stay for you. I stayed for your sweets! -> 160
+158: (ALBUS) Don't mention it. Neither of us should be defined by what our parents did here 20 years ago. -> 160
+159: (ALBUS) Now what? -> 160
+160: (SCORPIUS) Rose is quite fierce. [161, 162, 163]
+161: (ALBUS) Yeah sorry about that. -> 164
+162: (ALBUS) Yeah but she is a good person. -> 164
+163: (ALBUS) I know. She cares about all the wrong things though. -> 164
+164: (SCORPIUS) Here, try a Pepper Imp. But be warned! Smoke will *literally* come out of your ears. -> 165
+165: (NARRATOR) You end up chatting with Scorpius for the rest of the train ride and time flies by. You soon find yourself in the Great Hall of Hogwarts...ready to be sorted into a house. -> 195
+168: (SCORPIUS) {sounding dejected} Oh yeah, I guess you guys probably have other people you need to talk to. -> 169
+169: (ROSE) I'm sure you understand. We really shouldn't be seen with the son of a Death Eater. -> 170
+170: (SCORPIUS) Yeah I understand... [171, 172,173]
+171: (ALBUS) Wait I don't want anyone judging me based on my Dad. Let's stay. -> 149
+172: (ALBUS) Yeah let's get out of here Rose. -> 175
+173: (ALBUS) Hey nice to meet you Scorpius. -> 175
+175: (NARRATOR) You leave the cabin with Rose - the door shuts behind you. [176,177,178]
+176: (ALBUS) Maybe we shouldn't have been so harsh. Poor guy.  -> 179
+177: (ALBUS) Well that was awkward. Hopefully he can find some friends.  -> 179
+178: (ALBUS) That guy gave me the creeps! -> 179
+179: (ROSE) Yeah let's just forget about it. I hope the next cabin has some Griffindors in it.  -> 195
+182: (ROSE) Albus, I honestly wonder what goes on inside your head sometimes. Come on, let's go [183,184,185]
+183: (ALBUS) Rose, you're better than this.  -> 186
+184: (ALBUS) I guess we should move on but I still don't think you're right. -> 168
+185: (ALBUS) I think you should really reconsider. -> 186
+186: (ROSE) Hmm...ok fine. Let's stay for a bit but we really do need to move along eventually. -> 187
+187: (SCORPIUS) You guys are gonna stay?? Awesome! -> 188
+188: (SCORPIUS) So do you guys want some sweets? I've really got way too much. [189,190,191]
+189: (ALBUS) I would love a Pepper Imp  -> 193
+190: (ALBUS) Rose do you want anything? -> 193
+191: (ALBUS) Yeah one of everything please! -> 193
+193: (NARRATOR) You start talking with Scorpius and realize he is actually a really nice kid. In fact, he is a bit of a geek. Rose stays for most of the trip but eventually moves on. -> 195
+195: (TITLE) ACT ONE SCENE FOUR -- Hogwarts Great Hall -> 197
+197: (NARRATOR) You are now in the Great Hall of Hogwarts for the first time in your life. You've heard many stories of its grandness but are blown away by wonder all the same. -> 199
+199: (NARRATOR) It is time for you to be sorted into one of the four Houses of Hogwarts. You are filled with a mix of dread and excitement. -> 201
+201: (HEADMASTER) Will the next student, Albus Potter, please come to the front of the stage to be sorted. -> 203
+203: (NARRATOR) There is a not so hushed murmur as the famous last name is recognized universally throughout the hall as you walk up to the sorting hat. -> 205
+205: (SORTING HAT) Ahh, another Potter. Always an...interesting challenge. -> 207
+207: (ALBUS) Please just put me in Griffindor. -> 210
+208: (ALBUS) Make it quick please. -> 211
+209: (ALBUS) What is challenging about my family? We've always gone to Griffindor. -> 212
+210: (SORTING HAT) Are you really that nervous I might put you in Slytherin? [213,214,215]
+211: (SORTING HAT) Ah what's the rush? Are you nervous I might put you in Slytherin? [213,214,215]
+212: (SORTING HAT) That's true, but I don't think you appreciate how close some of those calls have been. [213,214,215]
+213: (ALBUS) I'm the farthest thing from a Slytherin! -> 216
+214: (ALBUS) I have nothing against any of the houses. -> 217
+215: (ALBUS) Sort me where you will. You know best. -> 218
+216: (SORTING HAT) That is for me to determine, not you young one. -> 219
+217: (SORTING HAT) Don't lie to me when I am inside of your head like this! I can see everything. -> 219
+218: (SORTING HAT) Ahh, a suck up. That's very Ravenclaw of you. -> 219
+219: (SORTING HAT) But tell me, why do you really want to be in Griffindor in the first place? [220,221,222]
+220: (ALBUS) I'm a Potter. It's where I belong. -> 223
+221: (ALBUS) Because I want to be brave and always do the right thing! -> 224
+222: (ALBUS) It's the only house I have ever known. -> 225
+223: (SORTING HAT) Your last name has nothing to do with this. [226, 227, 228]
+224: (SORTING HAT) Being sorted into a house won't make you into anything. That is up to you regardless of my decision tonight. [226, 227, 228]
+225: (SORTING HAT) Ahhh, would you like to know another one? [231,232,233]
+226: (ALBUS) Yeah I guess you're right. Sort me as you please. -> 229
+227: (ALBUS) If I am in Griffindor, I will always remember you favorably. -> 229
+228: (ALBUS) I give up in trying to convince you of anything. -> 230
+229: (SORTING HAT) No one commands me but only one house thinks they can. SLYTHERIN IT IS. -> 238
+230: (SORTING HAT) Now you finally get it. Ok, let's see. I will admit this is a confusing one. Ahh, yes. SLYTHERIN!! -> 238
+231: (ALBUS) Honestly not really. -> 234
+232: (ALBUS) I have always been curious about Slytherin. -> 235
+233: (ALBUS) Sure, but obviously I am not curious about Hufflepuff. -> 236
+234: (SORTING HAT) Ok...I have come to my decision. I think you will come to appreciate it in time-- SLYTHERIN! -> 238
+235: (SORTING HAT) Veeeery Interesting. As you wish, SLYTHERIN it is! -> 238
+236: (SORTING HAT) Haha! I see you have a sense of humor that was never present in your father. And for that, I decide SLYTHERIN!  -> 238
+238: (NARRATOR) A deafening silence immediately sweeps across the Hall instead of the usual applause. Slowly, some of the Slytherins process the news and slowly start to clap and gesture for you to come join them.

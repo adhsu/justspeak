@@ -133,6 +133,13 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CJx-fd-Rly" userLabel="recording status light">
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="12" id="FOb-Hu-ifQ"/>
+                                    <constraint firstAttribute="width" constant="12" id="aAv-rC-b3S"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -144,12 +151,14 @@
                             <constraint firstAttribute="trailingMargin" secondItem="krc-rL-AIi" secondAttribute="trailing" constant="-16" id="Hqw-MY-r44"/>
                             <constraint firstItem="krc-rL-AIi" firstAttribute="centerY" secondItem="qKu-00-qrW" secondAttribute="centerY" id="ILe-q2-e4l"/>
                             <constraint firstItem="grG-29-vNW" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="-270" id="KYU-rp-qJV"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="CJx-fd-Rly" secondAttribute="trailing" id="Kec-uU-019"/>
                             <constraint firstItem="mJe-by-QhS" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="NpP-qe-x70"/>
                             <constraint firstItem="7xe-MP-Nm9" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="O8K-HY-ddC"/>
                             <constraint firstItem="prE-ge-ovy" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="OQc-uv-6Eu"/>
                             <constraint firstItem="prE-ge-ovy" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="P4r-Ub-aGz"/>
                             <constraint firstItem="VAl-XJ-JJP" firstAttribute="centerY" secondItem="PeM-E5-QCe" secondAttribute="centerY" id="PTO-yB-zvl"/>
                             <constraint firstAttribute="trailingMargin" secondItem="bYh-90-i9H" secondAttribute="trailing" id="ThE-o6-Tfl"/>
+                            <constraint firstItem="CJx-fd-Rly" firstAttribute="bottom" secondItem="LtB-Ba-LX6" secondAttribute="top" constant="-16" id="UaL-9i-HYU"/>
                             <constraint firstAttribute="trailingMargin" secondItem="muP-ye-Rxy" secondAttribute="trailing" constant="-16" id="esA-3P-C94"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="zXJ-ic-Itq" secondAttribute="bottom" constant="50" id="fKH-KI-Zwa"/>
                             <constraint firstItem="bYh-90-i9H" firstAttribute="centerX" secondItem="grG-29-vNW" secondAttribute="centerX" id="gz3-sW-8Vu"/>
@@ -165,6 +174,7 @@
                     <connections>
                         <outlet property="recordButton" destination="7xe-MP-Nm9" id="WtH-Dp-x5U"/>
                         <outlet property="recordingStatus" destination="mJe-by-QhS" id="Bkz-x4-vgH"/>
+                        <outlet property="recordingStatusLight" destination="CJx-fd-Rly" id="J7K-Pu-Ygk"/>
                         <outlet property="response1" destination="PeM-E5-QCe" id="Xqk-EH-7UQ"/>
                         <outlet property="response2" destination="BLy-Uk-nhd" id="17O-Vx-ydm"/>
                         <outlet property="response3" destination="qKu-00-qrW" id="d9Y-QX-n0K"/>
