@@ -1,4 +1,7 @@
-1: (NARRATOR) You are in a busy and crowded train station. It is full of people trying to go somewhere. Amongst the busyness, there is a family dressed in slightly peculiar robes. There are two sons, JAMES POTTER and ALBUS POTTER, who are pushing two overflowing carts. Their mother, GINNY, follows after. A thirty-seven-year-old man, HARRY, has his daughter, LILY, on his shoulders. [13,14,15]
+1: (H1) ACT ONE, SCENE ONE -> 2
+2: (H2) KING'S CROSS STATION -> 3
+3: (picture) title-1.png -> 4
+4: (NARRATOR) You are in a busy and crowded train station. It is full of people trying to go somewhere. Amongst the busyness, there is a family dressed in slightly peculiar robes. There are two sons, JAMES POTTER and ALBUS POTTER, who are pushing two overflowing carts. Their mother, GINNY, follows after. A thirty-seven-year-old man, HARRY, has his daughter, LILY, on his shoulders. -> 12
 12: (Ginny) We'll write to you every day ALBUS! [13,14,15]
 13: (ALBUS) No. Not every day. James says most people only get letters from home about once a month. -> 16
 14: (ALBUS) You better! -> 16
@@ -11,8 +14,9 @@
 21: (NARRATOR) HARRY pretends he didn't hear you... -> 22
 22: (HARRY) Ok, let's do this! Remember don't stop and don't be scared you'll crash into it, that's very important. Best do it at a run if you're nervous. -> 23
 23: (ALBUS) I'm ready. -> 25
-25: (NARRATOR) HARRY and LILY put their hands on ALBUS's cart -- GINNY joins JAME's trolley -- together, the family runs hard into the barrier. -> 27
-27: (TITLE) ACT ONE, SCENE TWO -- PLATFORM NINE AND THREE-QUARTERS -> 32
+25: (NARRATOR) The family interlocks their hands and runs hard into the barrier together. -> 27
+27: (H1) ACT ONE, SCENE TWO -> 28
+28: (H2) PLATFORM NINE AND THREE-QUARTERS -> 32
 32: (NARRATOR) Instead of people in sharp suits going about their day, the platform is now full of wizards and witches in robes mostly trying to work out how to say good-bye to their beloved children. [34,35,36]
 34: (ALBUS) Wow, this is it. Platform 9 3/4. -> 37
 35: (ALBUS) Mom, I am really thinking we might want to wait a year... -> 37
@@ -37,12 +41,13 @@
 58: (HERMIONE) Rose. Remember to send Neville our love. -> 59
 59: (ROSE) Mom, I can't give a professor love! -> 61
 61: (NARRATOR) Rose exits for the train. Your hug your family one last time before following after her. -> 63
-63: (TITLE) ACT ONE, SCENE THREE -- The HOGWARTS EXPRESS -> 67
-67: (NARRATOR) You walk along the carriage of the train with Rose. The TROLLEY WITCH approaches, pushing her trolley.  -> 71
+63: (H1) ACT ONE, SCENE THREE -> 64
+64: (H2) THE HOGWARTS EXPRESS -> 67
+67: (NARRATOR) You walk along the carriage of the train with Rose. The TROLLEY WITCH approaches, pushing her trolley. -> 71
 71: (TROLLEY WITCH) Anything from the trolley, dears? Pumpkin Pasty? Chocolate Frog? Cauldron Cake? -> 72
 72: (ROSE) {spotting ALBUS's loving look at the Chocolate Frogs} Albus. We need to concentrate. -> 73
 73: (ALBUS) Concentrate on what? -> 74
-74: (ROSE) On who we choose to be friends with.  -> 79
+74: (ROSE) On who we choose to be friends with.  -> 75
 75: (ALBUS) Agreed! What candy should we eat first? -> 76
 76: (ROSE) Not that! We need to choose who to be friends with.  -> 79
 77: (ALBUS) Yeah, I'm not exactly feeling sweets right now either. -> 78
