@@ -1,30 +1,22 @@
-/*
-    Copyright (C) 2016 Apple Inc. All Rights Reserved.
-    See LICENSE.txt for this sample’s licensing information
-    
-    Abstract:
-    The primary view controller. The speach-to-text engine is managed an configured here.
-*/
-
 import UIKit
 import Speech
 import AVFoundation
 
-
-public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAudioPlayerDelegate {
+public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   // MARK: Properties
   private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
   private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
   private var recognitionTask: SFSpeechRecognitionTask?
   private let audioEngine = AVAudioEngine()
   private var player: AVAudioPlayer!
-  
+  private let playerNode = AVAudioPlayerNode()
+
+  private var inputNode: AVAudioInputNode?
   
   private var r1Translate : CGFloat?
   private var r2Translate : CGFloat?
   private var r3Translate : CGFloat?
   
-  @IBOutlet var textView : UITextView!
   @IBOutlet var recordButton : UIButton!
   @IBOutlet var restartButton : UIButton!
   @IBOutlet var storyScrollView : UIScrollView!
@@ -34,7 +26,6 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAud
   @IBOutlet var response2 : ResponseTextView!
   @IBOutlet var response3 : ResponseTextView!
   
-  @IBOutlet weak var recordingStatus: UILabel!
   @IBOutlet weak var recordingStatusLight: UIView!
 
   class Node {
@@ -58,15 +49,15 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAud
   }
   
   let greenColor: UIColor = UIColor(red:11/255.0, green:116/255.0, blue:57/255.0, alpha:1.0)
+  let lightGreenColor: UIColor = UIColor(red:30/255.0, green:173/255.0, blue:109/255.0, alpha:1.0)
   let redColor: UIColor = UIColor(red:147/255.0, green:40/255.0, blue:40/255.0, alpha:1.0)
   let grayColor: UIColor = UIColor(red:0.00, green:0.0, blue:0.0, alpha:0.25)
   let fadeGrayColor: UIColor = UIColor(red:0.00, green:0.0, blue:0.0, alpha:0.65)
   
   var currentNodeId: Int = 1
   
-  
   var nodes: [Int: Node] = [:] // dictionary of nodes, will construct in viewDidLoad
-  var recordingStopped: Bool = false
+  var recordingStopped: Bool = true
 
   
   // MARK: UIViewController
@@ -75,12 +66,38 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAud
     // called once when controller loads view into memory, do things you have to do only once
     print("stm: viewDidLoad()")
     super.viewDidLoad()
+    
+    // set up audioSession
+    let audioSession = AVAudioSession.sharedInstance()
+    do {
+      try audioSession.setCategory(AVAudioSessionCategoryPlayAndRecord, with: AVAudioSessionCategoryOptions.defaultToSpeaker)
+      try audioSession.setMode(AVAudioSessionModeDefault)
+      try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
+    } catch {
+      print("audioSession properties weren't set because of an error.")
+    }
 
+    
+    // start audioengine
+    do {
+      self.inputNode = audioEngine.inputNode
+      audioEngine.attach(self.playerNode)
+      let mainMixer = audioEngine.mainMixerNode
+      audioEngine.connect(self.playerNode, to: mainMixer, format: mainMixer.outputFormat(forBus: 0))
+      
+      // start audioEngine
+      print("start audioEngine")
+      audioEngine.prepare()
+      try audioEngine.start()
+    } catch let err as NSError {
+      print("couldn't start audioengine, error \(err)")
+    }
+
+    
     // Disable the record buttons until authorization has been granted.
     recordButton.isEnabled = false
-    textView.isHidden = true // hide transcript view, not needed right now
     
-    // set up response padding
+    // set up view padding
     let responsePadding: CGFloat = 16.0
     response1.textContainerInset = UIEdgeInsets(top: responsePadding, left: responsePadding, bottom: responsePadding, right: responsePadding)
     response2.textContainerInset = UIEdgeInsets(top: responsePadding, left: responsePadding, bottom: responsePadding, right: responsePadding)
@@ -89,6 +106,8 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAud
     response1.textContainer.lineFragmentPadding = 0
     response2.textContainer.lineFragmentPadding = 0
     response3.textContainer.lineFragmentPadding = 0
+    
+    storyScrollView.contentInset = UIEdgeInsets(top: 100.0, left: 0, bottom: 20.0, right: 0)
     
     
     // read story.txt from file
@@ -106,54 +125,62 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAud
     // print(nodes)
     
     
+
   }
+  
+  
   
   func playAudio(node: Node) {
-    print("play audio")
-    let filename = "sample2.mp3"
-    // play audio
-    let audioPath = Bundle.main.path(forResource: filename, ofType: nil)!
-    let url = NSURL(fileURLWithPath: audioPath)
     
-    do {
-      print("doing this shit")
-      self.player = try AVAudioPlayer(contentsOf: url as URL)
-      player.prepareToPlay()
-      player.delegate = self
-      player.volume = 1.0
-      player.play()
-      
-    } catch {
-      print("could not create AVAudioPlayer \(error)")
+    let filename = "audio/\(node.id).mp3"
+    // let filename = "audio/sample.mp3"
+    
+    func goNext() {
+      // audio plays on different thread, need to run this code on main thread
+      DispatchQueue.main.async {
+        if let node = self.nodes[self.currentNodeId] {
+          
+          if node.next != nil { // if node has a `next`
+            self.nextNode(node: node)
+          } else if let responses = node.responses { // if responses, show them
+            print("stm: current node \(self.currentNodeId), showing responses \(responses)")
+            self.setResponses(responses)
+          } else {
+            self.stopListeningLoop()
+          }
+        }
+      }
     }
     
-  }
-  
-  public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-    print("finished playing \(flag)")
     
-    if let node = self.nodes[self.currentNodeId] {
+    // play audio
+    if let audioPath = Bundle.main.path(forResource: filename, ofType: nil) {
       
-      if node.next != nil { // if node has a `next`
-        self.nextNode(node: node)
-      } else if let responses = node.responses { // if responses, show them
-        print("stm: current node \(self.currentNodeId), showing responses \(responses)")
-        self.setResponses(responses)
+      print("playing audio \(node.id).mp3")
+      let url = NSURL(fileURLWithPath: audioPath)
+      
+      do {
+        let audioFile = try AVAudioFile(forReading: url as URL)
         
-      } else {
-        self.stopListeningLoop()
+        playerNode.scheduleFile(audioFile, at: nil, completionHandler: {
+          goNext()
+          
+        })
+        
+        playerNode.play()
+        
+      } catch let err as NSError {
+        print(err)
       }
       
+    } else { // audio file not found
+      print("cannot find audio file for node \(node.id)")
+      delay(seconds: 1.0) {
+        goNext()
+      }
     }
     
   }
-  
-  public func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
-    if let e = error {
-      print("\(e.localizedDescription)")
-    }
-  }
-  
   
   override public func viewWillAppear(_ animated: Bool) {
     // called every time just before view is displayed/visible to user. always after viewDidLoad(). set up app state/view data here.
@@ -177,7 +204,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAud
     // view fully appears
     print("stm: viewDidAppear()")
     
-    resetAndInitializeStoryView()
+    resetAndInitializeStoryView(firstTime: true)
     
     // speech stuff
     speechRecognizer.delegate = self
@@ -214,6 +241,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAud
   private func matchScore(bestGuess: String, node: Node) -> Int {
     // Fuzzy match between transcription and children
     var count: Int = 0
+
     let splitResponse: Array = node.text.characters.split{$0 == " "}.map(String.init) // list of words in the response text
     let realResponseWords = splitResponse.filter { $0.characters.count >= 3 } // filter to words >= 4 chars in length
     
@@ -224,30 +252,17 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAud
   
   
   private func startListeningLoop() throws {
-    
+    print("startListeningLoop()")
     self.recordingStopped = false
     var completedMatch = false
     var crossedThreshold = false
     var randomChatterIdx: Int = 0 // up to this index is random chatter in bestGuess
-
-    // set up audioSession
-    let audioSession = AVAudioSession.sharedInstance()
-    do {
-      try audioSession.setCategory(AVAudioSessionCategoryRecord)
-      try audioSession.setMode(AVAudioSessionModeMeasurement)
-      try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
-    } catch {
-      print("audioSession properties weren't set because of an error.")
-    }
 
     // set up recognition request & audio input node
     recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
     guard let recognitionRequest = recognitionRequest else { fatalError("Unable to created a SFSpeechAudioBufferRecognitionRequest object") }
     recognitionRequest.shouldReportPartialResults = true
 
-    guard let inputNode = audioEngine.inputNode else { fatalError("Audio engine has no input node") }
-    
-    
     // set up recognition task. cancel previous if running.
     if let recognitionTask = recognitionTask {
       print("cancelling recognitionTask")
@@ -294,18 +309,16 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAud
               print("dialog chars: \(dialogCount), transcript chars: \(transcriptCount)")
               self.setResponseHighlight(responseIdx: highestMatch.index!, count: min(dialogCount, transcriptCount))
               
-              
               let completionPercentage: Float = Float(transcriptCount)/Float(dialogCount)
               if completionPercentage > 0.75 {
                 print("we have a match of at least 75%.")
                 
                 if !crossedThreshold {
                   print("triggering delayed advance, should only happen once***********")
-                  self.delay(seconds: 2.0) {
+                  self.setResponseHighlight(responseIdx: highestMatch.index!, count: dialogCount)
+                  self.delay(seconds: 0.25) {
                     if !completedMatch {
-
                       self.responseSelectedByAudio(node: highlightedResponseNode)
-
                     }
                   }
                   crossedThreshold = true
@@ -317,25 +330,16 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAud
                   self.setResponseHighlight(responseIdx: highestMatch.index!, count: dialogCount)
                   self.responseSelectedByAudio(node: highlightedResponseNode)
                 }
-                
               }
-              // if self.currentNode.children[highestMatch.index!].dialog.characters.count/bestGuess.characters.count > 0.8 {
-              // print("we have a match")
-              //}
             }
-            
-            
           }
-
-
-          // self.textView.text = bestGuess
           isFinal = result.isFinal
         }
           
         if error != nil || isFinal {
           print("recognition Task: isFinal \(isFinal), error \(error)")
           
-          self.audioEngine.stop()
+          // self.audioEngine.stop()
           self.recognitionRequest = nil
           self.recognitionTask = nil
           
@@ -345,19 +349,14 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAud
     } 
     
     // set up inputNode, add it to recognition request. ok to do this after starting recognitionTask.
-    print("install tap on inputNode")
-    let recordingFormat = inputNode.outputFormat(forBus: 0)
-    inputNode.removeTap(onBus: 0)
-    inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
+    print("install tap on inputNode, recording now")
+    let recordingFormat = self.inputNode?.outputFormat(forBus: 0)
+    self.inputNode?.removeTap(onBus: 0)
+    self.inputNode?.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
       self.recognitionRequest?.append(buffer)
     }
+    recordingStatusLight.backgroundColor = self.lightGreenColor
 
-    // start audioEngine
-    print("start audioEngine")
-    recordingStatusLight.backgroundColor = self.greenColor
-    audioEngine.prepare()
-    try audioEngine.start()
-    
   }
   
   func stopListeningLoop() {
@@ -365,7 +364,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAud
     self.recordingStopped = true
     self.recordingStatusLight.backgroundColor = self.grayColor
 
-    self.audioEngine.stop()
+    // self.audioEngine.stop()
     
     self.recognitionRequest?.endAudio()
     self.recognitionRequest = nil
@@ -390,30 +389,11 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAud
   // view functions
   func addStoryView(node: Node) {
     print("stm: addStoryView, node id \(node.id)")
-    let spaceBetween: CGFloat = 25.0
     
-    let textView = StoryTextView(text: node.text, speaker: node.speaker)
     
-    // set y position
-    let storyTextViewList = storyScrollView.subviews.filter({ $0 is StoryTextView }) // filter for StoryTextViews
-    // print("stm: storytextviewlist count \(storyTextViewList.count)")
-    if storyTextViewList.count > 0 {
-      if let prevStoryView = storyTextViewList.last as? StoryTextView { // get last one in list
-        // print("stm: last storytextview is \(prevStoryView), frame y \(prevStoryView.frame.origin.y), height \(prevStoryView.frame.size.height)")
-        let newY = prevStoryView.frame.origin.y + prevStoryView.frame.size.height + spaceBetween
-        // print("stm: setting y to \(newY)")
-        textView.frame.origin.y = newY
-      }
-    }
+    let textView = StoryTextView(text: node.text, speaker: node.speaker, id: node.id)
     
     storyScrollView.addSubview(textView)
-    // set size
-    textView.frame.size.width = storyScrollView.frame.size.width // set width to scrollview width to get proper height
-    textView.sizeToFit() // size frame to match height
-    textView.frame.size.width = storyScrollView.frame.size.width // set full width again
-    
-    // initially hidden to animate in
-    textView.alpha = 0
     
     // set proper storyScrollView size
     storyScrollView.setContentViewSize()
@@ -443,7 +423,8 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAud
   
   func animateInStoryView(_ view: StoryTextView, _ node: Node) {
     
-    
+    // print("animating in node id \(node.id)")
+    self.playAudio(node: node)
     
     // animate in
     UIView.animate(
@@ -454,21 +435,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAud
         view.alpha = 1.0
       },
       completion: {_ in
-        print("animating in node id \(node.id)")
-        // self.playAudio(node: node) // on completion, either go next node, set responses, or stop listening loop (at end)
-        if let node = self.nodes[self.currentNodeId] {
-          
-          if node.next != nil { // if node has a `next`
-            self.nextNode(node: node)
-          } else if let responses = node.responses { // if responses, show them
-            print("stm: current node \(self.currentNodeId), showing responses \(responses)")
-            self.setResponses(responses)
-            
-          } else {
-            self.stopListeningLoop()
-          }
-          
-        }
+        
         
         
     })
@@ -501,7 +468,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAud
         let newAttrString = NSMutableAttributedString(attributedString: response1.attributedText)
         newAttrString.addAttribute(
           NSForegroundColorAttributeName,
-          value: self.greenColor,
+          value: self.lightGreenColor,
           range: range)
         
 
@@ -510,14 +477,14 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAud
         let newAttrString = NSMutableAttributedString(attributedString: response2.attributedText)
         newAttrString.addAttribute(
           NSForegroundColorAttributeName,
-          value: greenColor,
+          value: self.lightGreenColor,
           range: range)
         response2.attributedText = newAttrString
       case 2:
         let newAttrString = NSMutableAttributedString(attributedString: response3.attributedText)
         newAttrString.addAttribute(
           NSForegroundColorAttributeName,
-          value: greenColor,
+          value: self.lightGreenColor,
           range: range)
         response3.attributedText = newAttrString
       default:
@@ -602,12 +569,12 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAud
   }
   
   func nextNode(node: Node) {
-    print("stm: currently on node \(self.currentNodeId), going to next!")
+    // print("stm: currently on node \(self.currentNodeId), going to next!")
     if let nextNode = self.nodes[node.next!] {
       
       self.addStoryView(node: nextNode) // add storyView
       self.currentNodeId = node.next! // set current node id
-      print("stm: current node id is \(self.currentNodeId)")
+      // print("stm: current node id is \(self.currentNodeId)")
     }
 
   }
@@ -733,20 +700,23 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, AVAud
     // self.restartButton.isHidden = true
   }
   
-  func resetAndInitializeStoryView() {
+  func resetAndInitializeStoryView(firstTime: Bool = false) {
+    print("resetAndInitializeStoryView")
+    
+    // clear storyScrollView
+    if !firstTime {
+      for subview in storyScrollView.subviews {
+        subview.removeFromSuperview()
+      }
+    }
+
     // set responses off screen to animate onscreen in viewDidAppear()
     responseStack.isHidden = true
     recordingStatusLight.isHidden = true
     recordingStatusLight.backgroundColor = self.grayColor
-
     
     // reset currentNodeId
     self.currentNodeId = 1
-
-    // clear storyScrollView
-    for subview in storyScrollView.subviews {
-      subview.removeFromSuperview()
-    }
     
     // add first node to view
     if let node = self.nodes[self.currentNodeId] {

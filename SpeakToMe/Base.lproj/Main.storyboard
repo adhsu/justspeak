@@ -19,12 +19,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" image="trees.png" translatesAutoresizingMaskIntoConstraints="NO" id="grG-29-vNW" userLabel="trees">
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="431" id="QIj-tj-wka"/>
-                                    <constraint firstAttribute="width" constant="400" id="xc2-c4-oQf"/>
-                                </constraints>
-                            </imageView>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7xe-MP-Nm9">
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="HxC-n0-Epe"/>
@@ -34,24 +28,12 @@
                                     <action selector="recordButtonTapped" destination="BYZ-38-t0r" eventType="touchUpInside" id="Ugn-XV-Kkw"/>
                                 </connections>
                             </button>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Press the Record button!" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="prE-ge-ovy">
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="qyF-T1-yof"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="16"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES" address="YES" calendarEvent="YES"/>
-                            </textView>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bYh-90-i9H">
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="260" id="4bj-i7-eei"/>
-                                </constraints>
                             </scrollView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="LtB-Ba-LX6" userLabel="responseStack">
                                 <subviews>
-                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" tag="1" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" usesAttributedText="YES" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PeM-E5-QCe" userLabel="Response1" customClass="ResponseTextView" customModule="SpeakToMe" customModuleProvider="target">
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" tag="1" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" usesAttributedText="YES" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PeM-E5-QCe" userLabel="Response1" customClass="ResponseTextView" customModule="SpeakToMe" customModuleProvider="target">
                                         <color key="backgroundColor" red="0.97254901960784312" green="0.97254901960784312" blue="0.97254901960784312" alpha="1" colorSpace="calibratedRGB"/>
                                         <attributedString key="attributedText">
                                             <fragment content="response1">
@@ -64,7 +46,7 @@
                                         </attributedString>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                     </textView>
-                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" tag="2" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" usesAttributedText="YES" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BLy-Uk-nhd" userLabel="Response2" customClass="ResponseTextView" customModule="SpeakToMe" customModuleProvider="target">
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" tag="2" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" usesAttributedText="YES" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BLy-Uk-nhd" userLabel="Response2" customClass="ResponseTextView" customModule="SpeakToMe" customModuleProvider="target">
                                         <color key="backgroundColor" red="0.94117647058823528" green="0.94117647058823528" blue="0.94117647058823528" alpha="1" colorSpace="calibratedRGB"/>
                                         <attributedString key="attributedText">
                                             <fragment content="response2">
@@ -77,7 +59,7 @@
                                         </attributedString>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                     </textView>
-                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" tag="3" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" usesAttributedText="YES" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qKu-00-qrW" userLabel="Response3" customClass="ResponseTextView" customModule="SpeakToMe" customModuleProvider="target">
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" tag="3" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" usesAttributedText="YES" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qKu-00-qrW" userLabel="Response3" customClass="ResponseTextView" customModule="SpeakToMe" customModuleProvider="target">
                                         <color key="backgroundColor" red="0.90980392156862744" green="0.90980392156862744" blue="0.90980392156862744" alpha="1" colorSpace="calibratedRGB"/>
                                         <attributedString key="attributedText">
                                             <fragment content="response3">
@@ -101,15 +83,6 @@
                                     <action selector="responseSelectedWithSender:" destination="BYZ-38-t0r" eventType="touchUpInside" id="qhU-vX-R3m"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zXJ-ic-Itq">
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="dH4-0s-I9w"/>
-                                </constraints>
-                                <state key="normal" title="Restart"/>
-                                <connections>
-                                    <action selector="restartButtonTapped" destination="BYZ-38-t0r" eventType="touchUpInside" id="Soz-vn-Pnk"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="muP-ye-Rxy" userLabel="select resp2">
                                 <constraints>
                                     <constraint firstAttribute="width" constant="30" id="PxP-jG-9xF"/>
@@ -128,14 +101,6 @@
                                     <action selector="responseSelectedWithSender:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Jtp-Uc-siz"/>
                                 </connections>
                             </button>
-                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="recording status" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mJe-by-QhS" userLabel="recording status">
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="CNb-fQ-ZRG"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CJx-fd-Rly" userLabel="recording status light">
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -143,40 +108,41 @@
                                     <constraint firstAttribute="width" constant="12" id="aAv-rC-b3S"/>
                                 </constraints>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zXJ-ic-Itq">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="dH4-0s-I9w"/>
+                                </constraints>
+                                <state key="normal" title="Restart"/>
+                                <connections>
+                                    <action selector="restartButtonTapped" destination="BYZ-38-t0r" eventType="touchUpInside" id="Soz-vn-Pnk"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="grG-29-vNW" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="0WI-Bt-aF2"/>
-                            <constraint firstItem="bYh-90-i9H" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="120" id="8hb-uS-pzy"/>
+                            <constraint firstItem="bYh-90-i9H" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="8hb-uS-pzy"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="LtB-Ba-LX6" secondAttribute="bottom" id="95R-ez-xwz"/>
                             <constraint firstItem="LtB-Ba-LX6" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="9eo-Xt-lZV"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="bYh-90-i9H" secondAttribute="bottom" id="9rb-0d-ipX"/>
                             <constraint firstItem="7xe-MP-Nm9" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="FDx-qi-xq2"/>
                             <constraint firstAttribute="trailingMargin" secondItem="zXJ-ic-Itq" secondAttribute="trailing" id="GEo-Xb-A6E"/>
                             <constraint firstAttribute="trailingMargin" secondItem="krc-rL-AIi" secondAttribute="trailing" constant="-16" id="Hqw-MY-r44"/>
                             <constraint firstItem="krc-rL-AIi" firstAttribute="centerY" secondItem="qKu-00-qrW" secondAttribute="centerY" id="ILe-q2-e4l"/>
                             <constraint firstItem="zXJ-ic-Itq" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="10" id="Jbe-v3-E7l"/>
-                            <constraint firstItem="grG-29-vNW" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="-270" id="KYU-rp-qJV"/>
                             <constraint firstAttribute="trailingMargin" secondItem="CJx-fd-Rly" secondAttribute="trailing" id="Kec-uU-019"/>
-                            <constraint firstItem="mJe-by-QhS" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="30" id="NpP-qe-x70"/>
                             <constraint firstItem="7xe-MP-Nm9" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="O8K-HY-ddC"/>
-                            <constraint firstItem="prE-ge-ovy" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="OQc-uv-6Eu"/>
-                            <constraint firstItem="prE-ge-ovy" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="P4r-Ub-aGz"/>
                             <constraint firstItem="VAl-XJ-JJP" firstAttribute="centerY" secondItem="PeM-E5-QCe" secondAttribute="centerY" id="PTO-yB-zvl"/>
                             <constraint firstAttribute="trailingMargin" secondItem="bYh-90-i9H" secondAttribute="trailing" id="ThE-o6-Tfl"/>
                             <constraint firstItem="CJx-fd-Rly" firstAttribute="bottom" secondItem="LtB-Ba-LX6" secondAttribute="top" constant="-16" id="UaL-9i-HYU"/>
                             <constraint firstAttribute="trailingMargin" secondItem="muP-ye-Rxy" secondAttribute="trailing" constant="-16" id="esA-3P-C94"/>
-                            <constraint firstItem="bYh-90-i9H" firstAttribute="centerX" secondItem="grG-29-vNW" secondAttribute="centerX" id="gz3-sW-8Vu"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="mJe-by-QhS" secondAttribute="trailing" id="i8k-SB-jEZ"/>
                             <constraint firstItem="bYh-90-i9H" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="iD4-dU-1rU"/>
                             <constraint firstAttribute="trailingMargin" secondItem="VAl-XJ-JJP" secondAttribute="trailing" constant="-16" id="lNQ-Xr-HZd"/>
-                            <constraint firstItem="prE-ge-ovy" firstAttribute="bottom" secondItem="LtB-Ba-LX6" secondAttribute="top" constant="-25" id="rbp-Wj-sd1"/>
                             <constraint firstItem="LtB-Ba-LX6" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="tYR-e1-mKU"/>
                             <constraint firstItem="muP-ye-Rxy" firstAttribute="centerY" secondItem="BLy-Uk-nhd" secondAttribute="centerY" id="v38-B0-08S"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="recordButton" destination="7xe-MP-Nm9" id="WtH-Dp-x5U"/>
-                        <outlet property="recordingStatus" destination="mJe-by-QhS" id="Bkz-x4-vgH"/>
                         <outlet property="recordingStatusLight" destination="CJx-fd-Rly" id="J7K-Pu-Ygk"/>
                         <outlet property="response1" destination="PeM-E5-QCe" id="Xqk-EH-7UQ"/>
                         <outlet property="response2" destination="BLy-Uk-nhd" id="17O-Vx-ydm"/>
@@ -184,7 +150,6 @@
                         <outlet property="responseStack" destination="LtB-Ba-LX6" id="p4k-2x-4YE"/>
                         <outlet property="restartButton" destination="zXJ-ic-Itq" id="gv2-Jk-C2o"/>
                         <outlet property="storyScrollView" destination="bYh-90-i9H" id="6Hf-mB-j1C"/>
-                        <outlet property="textView" destination="prE-ge-ovy" id="xF3-eW-DoN"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -192,7 +157,4 @@
             <point key="canvasLocation" x="-0.80000000000000004" y="-2.2488755622188905"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="trees.png" width="818" height="882"/>
-    </resources>
 </document>
