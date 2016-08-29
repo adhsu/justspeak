@@ -19,15 +19,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7xe-MP-Nm9">
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="HxC-n0-Epe"/>
-                                </constraints>
-                                <state key="normal" title="Start Recording!"/>
-                                <connections>
-                                    <action selector="recordButtonTapped" destination="BYZ-38-t0r" eventType="touchUpInside" id="Ugn-XV-Kkw"/>
-                                </connections>
-                            </button>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bYh-90-i9H">
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </scrollView>
@@ -73,6 +64,7 @@
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                     </textView>
                                 </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </stackView>
                             <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VAl-XJ-JJP" userLabel="select resp1">
                                 <constraints>
@@ -108,6 +100,15 @@
                                     <constraint firstAttribute="width" constant="12" id="aAv-rC-b3S"/>
                                 </constraints>
                             </view>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7xe-MP-Nm9">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="HxC-n0-Epe"/>
+                                </constraints>
+                                <state key="normal" title="butan"/>
+                                <connections>
+                                    <action selector="butanButtonTapped" destination="BYZ-38-t0r" eventType="touchUpInside" id="DRw-v2-8O9"/>
+                                </connections>
+                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zXJ-ic-Itq">
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="dH4-0s-I9w"/>
@@ -120,15 +121,15 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="bYh-90-i9H" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="8hb-uS-pzy"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="bYh-90-i9H" secondAttribute="bottom" identifier="storyScrollViewBottom" id="2Fy-bQ-vgu"/>
+                            <constraint firstItem="bYh-90-i9H" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="30" id="8hb-uS-pzy"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="LtB-Ba-LX6" secondAttribute="bottom" id="95R-ez-xwz"/>
                             <constraint firstItem="LtB-Ba-LX6" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="9eo-Xt-lZV"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="bYh-90-i9H" secondAttribute="bottom" id="9rb-0d-ipX"/>
                             <constraint firstItem="7xe-MP-Nm9" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="FDx-qi-xq2"/>
                             <constraint firstAttribute="trailingMargin" secondItem="zXJ-ic-Itq" secondAttribute="trailing" id="GEo-Xb-A6E"/>
                             <constraint firstAttribute="trailingMargin" secondItem="krc-rL-AIi" secondAttribute="trailing" constant="-16" id="Hqw-MY-r44"/>
                             <constraint firstItem="krc-rL-AIi" firstAttribute="centerY" secondItem="qKu-00-qrW" secondAttribute="centerY" id="ILe-q2-e4l"/>
-                            <constraint firstItem="zXJ-ic-Itq" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="10" id="Jbe-v3-E7l"/>
+                            <constraint firstItem="zXJ-ic-Itq" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="Jbe-v3-E7l"/>
                             <constraint firstAttribute="trailingMargin" secondItem="CJx-fd-Rly" secondAttribute="trailing" id="Kec-uU-019"/>
                             <constraint firstItem="7xe-MP-Nm9" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="O8K-HY-ddC"/>
                             <constraint firstItem="VAl-XJ-JJP" firstAttribute="centerY" secondItem="PeM-E5-QCe" secondAttribute="centerY" id="PTO-yB-zvl"/>
@@ -142,7 +143,7 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="recordButton" destination="7xe-MP-Nm9" id="WtH-Dp-x5U"/>
+                        <outlet property="butanButton" destination="7xe-MP-Nm9" id="MmJ-qz-d0I"/>
                         <outlet property="recordingStatusLight" destination="CJx-fd-Rly" id="J7K-Pu-Ygk"/>
                         <outlet property="response1" destination="PeM-E5-QCe" id="Xqk-EH-7UQ"/>
                         <outlet property="response2" destination="BLy-Uk-nhd" id="17O-Vx-ydm"/>

@@ -1,20 +1,22 @@
 1: (H1) ACT ONE, SCENE ONE -> 2
 2: (H2) KING'S CROSS STATION -> 3
-3: (picture) title-1.png -> 4
-4: (NARRATOR) You are in a busy and crowded train station. It is full of people trying to go somewhere. Amongst the busyness, there is a family dressed in slightly peculiar robes. There are two sons, JAMES POTTER and ALBUS POTTER, who are pushing two overflowing carts. Their mother, GINNY, follows after. A thirty-seven-year-old man, HARRY, has his daughter, LILY, on his shoulders. -> 12
+3: (music) scene1.mp3 -> 4
+4: (picture) potter.jpg -> 12
+10: (NARRATOR) You are in a busy and crowded train station. It is full of people trying to go somewhere. Amongst the busyness, there is a family dressed in slightly peculiar robes. There are two sons, JAMES POTTER and ALBUS POTTER, who are pushing two overflowing carts. Their mother, GINNY, follows after. A thirty-seven-year-old man, HARRY, has his daughter, LILY, on his shoulders. -> 12
 12: (Ginny) We'll write to you every day ALBUS! [13,14,15]
-13: (ALBUS) No. Not every day. James says most people only get letters from home about once a month. -> 16
-14: (ALBUS) You better! -> 16
-15: (ALBUS) Mom, I'm 12 years old now. I'm no longer a little kid. -> 16
+13: (ALBUS) No. Not every day. James says most people only get letters from home about once a month. -> 17
+14: (ALBUS) You better! -> 17
+15: (ALBUS) Mom, I'm 12 years old now. I'm no longer a little kid. -> 17
 16: (HARRY) We wrote to your brother three times a week last year. Don't believe everything your brother says about Hogwarts, Albus. -> 17
-17: (JAMES) Can we go now please? [18,19,20]
+17: (JAMES) Can we go now please? [18, 19, 20]
 18: (ALBUS) Yes, I can't wait to get on that train! -> 22
 19: (ALBUS) I can't believe I actually get to go to Hogwarts. -> 22
 20: (ALBUS) I don't know...maybe I should just wait until next year. -> 21
 21: (NARRATOR) HARRY pretends he didn't hear you... -> 22
 22: (HARRY) Ok, let's do this! Remember don't stop and don't be scared you'll crash into it, that's very important. Best do it at a run if you're nervous. -> 23
-23: (ALBUS) I'm ready. -> 25
-25: (NARRATOR) The family interlocks their hands and runs hard into the barrier together. -> 27
+23: (ALBUS) I'm ready. -> 24
+24: (picture) platform.jpg -> 25
+25: (NARRATOR) The family interlocks their hands and runs hard into the barrier together. The family interlocks their hands and runs hard into the barrier together. The family interlocks their hands and runs hard into the barrier together. -> 27
 27: (H1) ACT ONE, SCENE TWO -> 28
 28: (H2) PLATFORM NINE AND THREE-QUARTERS -> 32
 32: (NARRATOR) Instead of people in sharp suits going about their day, the platform is now full of wizards and witches in robes mostly trying to work out how to say good-bye to their beloved children. [34,35,36]
