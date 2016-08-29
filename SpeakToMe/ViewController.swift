@@ -10,16 +10,20 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   private let audioEngine = AVAudioEngine()
   private var player: AVAudioPlayer!
   private let playerNode = AVAudioPlayerNode()
+  private let musicNode = AVAudioPlayerNode()
+  private let backgroundAudioNode = AVAudioPlayerNode()
 
   private var inputNode: AVAudioInputNode?
   
-  private var r1Translate : CGFloat?
-  private var r2Translate : CGFloat?
-  private var r3Translate : CGFloat?
+  private var r1Translate : CGFloat = 0
+  private var r2Translate : CGFloat = 0
+  private var r3Translate : CGFloat = 0
   
-  @IBOutlet var recordButton : UIButton!
+  
+  @IBOutlet var butanButton : UIButton!
   @IBOutlet var restartButton : UIButton!
   @IBOutlet var storyScrollView : UIScrollView!
+  let storyScrollViewDefaultInsets = UIEdgeInsets(top: 20.0, left: 0, bottom: 20.0, right: 0)
   
   @IBOutlet var responseStack : UIStackView!
   @IBOutlet var response1 : ResponseTextView!
@@ -28,26 +32,6 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   
   @IBOutlet weak var recordingStatusLight: UIView!
 
-  class Node {
-    var id: Int
-    var text: String
-    var speaker: String
-    var next: Int? // has `next` if there's another message next
-    var responses: [Int]? // has `responses` array if user can respond to this
-
-    init(id: Int, text: String, speaker: String, next: Int? = nil, responses: [Int]? = nil) {
-      self.id = id
-      self.text = text
-      self.speaker = speaker
-      if (next != nil) {
-        self.next = next
-      }
-      if (responses != nil) {
-        self.responses = responses
-      }
-    }
-  }
-  
   let greenColor: UIColor = UIColor(red:11/255.0, green:116/255.0, blue:57/255.0, alpha:1.0)
   let lightGreenColor: UIColor = UIColor(red:30/255.0, green:173/255.0, blue:109/255.0, alpha:1.0)
   let redColor: UIColor = UIColor(red:147/255.0, green:40/255.0, blue:40/255.0, alpha:1.0)
@@ -58,7 +42,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   
   var nodes: [Int: Node] = [:] // dictionary of nodes, will construct in viewDidLoad
   var recordingStopped: Bool = true
-
+  
   
   // MARK: UIViewController
   
@@ -81,9 +65,18 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     // start audioengine
     do {
       self.inputNode = audioEngine.inputNode
-      audioEngine.attach(self.playerNode)
+      
       let mainMixer = audioEngine.mainMixerNode
+      
+      audioEngine.attach(self.playerNode)
       audioEngine.connect(self.playerNode, to: mainMixer, format: mainMixer.outputFormat(forBus: 0))
+      
+      audioEngine.attach(self.musicNode)
+      audioEngine.connect(self.musicNode, to: mainMixer, format: mainMixer.outputFormat(forBus: 0))
+      
+      audioEngine.attach(self.backgroundAudioNode)
+      audioEngine.connect(self.backgroundAudioNode, to: mainMixer, format: mainMixer.outputFormat(forBus: 0))
+      
       
       // start audioEngine
       print("start audioEngine")
@@ -95,7 +88,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
     
     // Disable the record buttons until authorization has been granted.
-    recordButton.isEnabled = false
+    // recordButton.isEnabled = false
     
     // set up view padding
     let responsePadding: CGFloat = 16.0
@@ -107,7 +100,10 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     response2.textContainer.lineFragmentPadding = 0
     response3.textContainer.lineFragmentPadding = 0
     
-    storyScrollView.contentInset = UIEdgeInsets(top: 100.0, left: 0, bottom: 20.0, right: 0)
+    storyScrollView.contentInset = self.storyScrollViewDefaultInsets
+    // storyScrollView.layer.borderColor = UIColor(red:0.00, green:0.00, blue:0.00, alpha:0.5).cgColor
+    // storyScrollView.layer.borderWidth = 1.0
+    // storyScrollView.backgroundColor = UIColor(red:0.00, green:0.00, blue:0.00, alpha:0.1)
     
     
     // read story.txt from file
@@ -128,45 +124,43 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
   }
   
-  
+  func goNext() {
+    
+    // audio plays on different thread, need to run this code on main thread
+    DispatchQueue.main.async {
+      
+      if let node = self.nodes[self.currentNodeId] {
+        
+        if node.next != nil { // if node has a `next`
+          self.nextNode(node: node)
+        } else if let responses = node.responses { // if responses, show them
+          print("stm: current node \(self.currentNodeId), showing responses \(responses)")
+          self.setResponses(responses)
+        } else {
+          self.stopListeningLoop()
+        }
+      }
+    }
+  }
   
   func playAudio(node: Node) {
     
     let filename = "audio/\(node.id).mp3"
-    // let filename = "audio/sample.mp3"
-    
-    func goNext() {
-      // audio plays on different thread, need to run this code on main thread
-      DispatchQueue.main.async {
-        if let node = self.nodes[self.currentNodeId] {
-          
-          if node.next != nil { // if node has a `next`
-            self.nextNode(node: node)
-          } else if let responses = node.responses { // if responses, show them
-            print("stm: current node \(self.currentNodeId), showing responses \(responses)")
-            self.setResponses(responses)
-          } else {
-            self.stopListeningLoop()
-          }
-        }
-      }
-    }
-    
     
     // play audio
     if let audioPath = Bundle.main.path(forResource: filename, ofType: nil) {
       
-      print("playing audio \(node.id).mp3")
+      // print("playing audio \(node.id).mp3")
       let url = NSURL(fileURLWithPath: audioPath)
       
       do {
         let audioFile = try AVAudioFile(forReading: url as URL)
         
         playerNode.scheduleFile(audioFile, at: nil, completionHandler: {
-          goNext()
+          self.goNext()
           
         })
-        
+
         playerNode.play()
         
       } catch let err as NSError {
@@ -174,9 +168,9 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
       }
       
     } else { // audio file not found
-      print("cannot find audio file for node \(node.id)")
-      delay(seconds: 1.0) {
-        goNext()
+      // print("cannot find audio file for node \(node.id)")
+      delay(seconds: 1.5) {
+        self.goNext()
       }
     }
     
@@ -184,14 +178,14 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   
   override public func viewWillAppear(_ animated: Bool) {
     // called every time just before view is displayed/visible to user. always after viewDidLoad(). set up app state/view data here.
-    print("stm: viewWillAppear()")
+    // print("stm: viewWillAppear()")
     super.viewWillAppear(animated)
     
   }
   
   override public func viewDidLayoutSubviews() {
     // called after sizes (frames/bounds/etc) calculated. views already laid out by autolayout. handle anything dependent on bounds here.
-    print("stm: viewDidLayoutSubviews()")
+    // print("stm: viewDidLayoutSubviews()")
     super.viewDidLayoutSubviews()
     
     // set up response status light radius
@@ -202,8 +196,9 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   
   override public func viewDidAppear(_ animated: Bool) {
     // view fully appears
-    print("stm: viewDidAppear()")
+    // print("stm: viewDidAppear()")
     
+  
     resetAndInitializeStoryView(firstTime: true)
     
     // speech stuff
@@ -217,19 +212,23 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
       OperationQueue.main.addOperation {
         switch authStatus {
           case .authorized:
-            self.recordButton.isEnabled = true
+            ()
+            // self.recordButton.isEnabled = true
 
           case .denied:
-            self.recordButton.isEnabled = false
-            self.recordButton.setTitle("User denied access to speech recognition", for: .disabled)
+            ()
+            // self.recordButton.isEnabled = false
+            // self.recordButton.setTitle("User denied access to speech recognition", for: .disabled)
 
           case .restricted:
-            self.recordButton.isEnabled = false
-            self.recordButton.setTitle("Speech recognition restricted on this device", for: .disabled)
+            ()
+            // self.recordButton.isEnabled = false
+            // self.recordButton.setTitle("Speech recognition restricted on this device", for: .disabled)
 
           case .notDetermined:
-            self.recordButton.isEnabled = false
-            self.recordButton.setTitle("Speech recognition not yet authorized", for: .disabled)
+            ()
+            // self.recordButton.isEnabled = false
+            // self.recordButton.setTitle("Speech recognition not yet authorized", for: .disabled)
         }
       }
     }
@@ -288,6 +287,8 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             let matchCount = self.matchScore(bestGuess: bestGuess, node: responseNode) // matchScore is the total number of words we've matched
             
             if highestMatch.matchCount < matchCount { // this new dialog option is the best match so far
+              
+
               highestMatch = (idx, matchCount)
               print("new highest match idx \(idx)")
               // print("new highest match: \(responseNode.text)")
@@ -375,6 +376,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   }
   
 
+  /*
   public func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
     print("setting recordButton back to 'start recording'")
     if available {
@@ -385,39 +387,102 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         recordButton.setTitle("Recognition not available", for: .disabled)
     }
   }
+  */
+
+  func scrollViewToBottom(animated: Bool = true) {
+    print("scrolling to bottom, animated \(animated)")
+    let bottomOffset = storyScrollView.contentSize.height - storyScrollView.frame.size.height + storyScrollView.contentInset.bottom
+    let bottomOffsetPt: CGPoint = CGPoint(x: 0, y: bottomOffset)
+
+    if bottomOffset > 0 {
+      self.storyScrollView.setContentOffset(bottomOffsetPt, animated: animated)
+    }
+    
+
+  }
 
   // view functions
   func addStoryView(node: Node) {
     print("stm: addStoryView, node id \(node.id)")
     
     
+    if node.speaker.lowercased() == "music" {
+      
+      // play music for scene
+      
+      if let path = Bundle.main.path(forResource: "music/\(node.text)", ofType: nil) {
+        let url = NSURL(fileURLWithPath: path)
+        do {
+          let audioFile = try AVAudioFile(forReading: url as URL)
+          musicNode.scheduleFile(audioFile, at: nil, completionHandler: nil)
+          musicNode.play()
+          
+        } catch let err as NSError {
+          print(err)
+        }
+      }
+ 
+      // play background audio for scene
+      if let path = Bundle.main.path(forResource: "music/scene1_background.mp3", ofType: nil) {
+        let url = NSURL(fileURLWithPath: path)
+        do {
+          let audioFile = try AVAudioFile(forReading: url as URL)
+          let audioFormat = audioFile.processingFormat
+          let audioFrameCount = UInt32(audioFile.length)
+          let audioFileBuffer = AVAudioPCMBuffer(pcmFormat: audioFormat, frameCapacity: audioFrameCount)
+          try audioFile.read(into: audioFileBuffer)
+          
+          
+          backgroundAudioNode.scheduleBuffer(audioFileBuffer, at: nil, options: .loops, completionHandler: nil)
+          
+          backgroundAudioNode.play()
+          
+        } catch let err as NSError {
+          print(err)
+        }
+      }
+      
+      
+      
+      
+      self.goNext()
+      return
+    }
+    
     let textView = StoryTextView(text: node.text, speaker: node.speaker, id: node.id)
     
     storyScrollView.addSubview(textView)
+    print("added subview, height is \(textView.frame.size.height)")
     
     // set proper storyScrollView size
     storyScrollView.setContentViewSize()
+
+    let contentInsetExists = (self.storyScrollView.contentInset.bottom > self.storyScrollViewDefaultInsets.bottom)
     
-    // scroll to bottom
-    let bottomOffset = storyScrollView.contentSize.height - storyScrollView.bounds.size.height + storyScrollView.contentInset.bottom
-    let bottomOffsetPt: CGPoint = CGPoint(x: 0, y: bottomOffset)
+    print(self.storyScrollView.contentInset.bottom, self.storyScrollViewDefaultInsets.bottom)
     
-    if bottomOffset > 0 { // if we can scroll down
+
+    if contentInsetExists {
+
+      let newInset = self.storyScrollView.contentInset.bottom - textView.frame.size.height 
+
+      if newInset < self.storyScrollViewDefaultInsets.bottom {
+        self.setScrollBottomInset(amount: self.storyScrollViewDefaultInsets.bottom, animated: true)
       
-      UIView.animate(
-        withDuration: 0.5,
-        delay: 0.0,
-        options: [.curveEaseInOut],
-        animations: {
-          self.storyScrollView.setContentOffset(bottomOffsetPt, animated: false)
-        },
-        completion: {_ in
-          self.animateInStoryView(textView, node)
-        })
-      
+      } else {
+        self.setScrollBottomInset(amount: newInset, animated: false)
+      }
+    
+
     } else {
-      self.animateInStoryView(textView, node)
+
+      // scroll to bottom
+      self.scrollViewToBottom(animated: true)
+
     }
+
+    self.animateInStoryView(textView, node)
+
     
   }
   
@@ -434,11 +499,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
       animations: {
         view.alpha = 1.0
       },
-      completion: {_ in
-        
-        
-        
-    })
+      completion: nil)
   }
   
   func createAttrString(text: String) ->  NSMutableAttributedString {
@@ -504,41 +565,46 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     let response1Node = nodes[responses[0]]!
     let response2Node = nodes[responses[1]]!
     let response3Node = nodes[responses[2]]!
-    
+
     response1.attributedText = createAttrString(text: response1Node.text)
     response2.attributedText = createAttrString(text: response2Node.text)
     response3.attributedText = createAttrString(text: response3Node.text)
-    
+    self.view.layoutIfNeeded() // update height of responseStack after new text has been added
     response1.id = response1Node.id
     response2.id = response2Node.id
     response3.id = response3Node.id
     
     responseStack.isHidden = false
     recordingStatusLight.isHidden = false
-
+    
     // initially hidden to animate in
     recordingStatusLight.alpha = 0
     
     
-    // animate responses in
+    // calculate distance between top of response view and bottom of frame
+    
     r1Translate = self.view.frame.size.height - response1.frame.origin.y
     r2Translate = self.view.frame.size.height - response2.frame.origin.y
     r3Translate = self.view.frame.size.height - response3.frame.origin.y
-
-    response1.frame.origin.y += r1Translate!
-    response2.frame.origin.y += r2Translate!
-    response3.frame.origin.y += r3Translate!
- 
     
+    // move responses just offscreen with the translate values
+    response1.frame.origin.y += r1Translate
+    response2.frame.origin.y += r2Translate
+    response3.frame.origin.y += r3Translate
+    
+    // move storyScrollView content up with contentInset
+    
+    // print("responseStack height: \(self.responseStack.frame.size.height)")
+    self.setScrollBottomInset(amount: self.responseStack.frame.size.height + self.storyScrollViewDefaultInsets.bottom, animated: true)
+
+    // animate responses back in
     UIView.animate(
       withDuration: 0.5,
-      delay: 0.0,
-      usingSpringWithDamping: 0.8,
-      initialSpringVelocity: 0.0,
-      options: [],
+      delay: 0.5,
+      options: [.curveEaseInOut],
       animations: {
         
-        self.response1.frame.origin.y -= self.r1Translate!
+        self.response1.frame.origin.y -= self.r1Translate
         self.recordingStatusLight.alpha = 1
       }, 
       completion: nil)
@@ -546,25 +612,21 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     
     UIView.animate(
       withDuration: 0.5,
-      delay: 0.25,
-      usingSpringWithDamping: 0.8,
-      initialSpringVelocity: 0.0,
-      options: [],
+      delay: 0.75,
+      options: [.curveEaseInOut],
       animations: {
-        self.response2.frame.origin.y -= self.r2Translate!
+        self.response2.frame.origin.y -= self.r2Translate
       }, completion: nil)
     
     UIView.animate(
       withDuration: 0.5,
-      delay: 0.5,
-      usingSpringWithDamping: 0.8,
-      initialSpringVelocity: 0.0,
-      options: [],
+      delay: 1,
+      options: [.curveEaseInOut],
       animations: {
-        self.response3.frame.origin.y -= self.r3Translate!
+        self.response3.frame.origin.y -= self.r3Translate
       }, 
       completion: nil)
-    
+
 
   }
   
@@ -593,7 +655,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
       options: [.curveEaseInOut],
       animations: {
         
-        self.response1.frame.origin.y += self.r1Translate!
+        self.response1.frame.origin.y += self.r1Translate
         
       }, completion: nil)
     
@@ -603,7 +665,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
       delay: 0.25,
       options: [.curveEaseInOut],
       animations: {
-        self.response2.frame.origin.y += self.r2Translate!
+        self.response2.frame.origin.y += self.r2Translate
       }, completion: nil)
     
     UIView.animate(
@@ -611,7 +673,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
       delay: 0.5,
       options: [.curveEaseInOut],
       animations: {
-        self.response3.frame.origin.y += self.r3Translate!
+        self.response3.frame.origin.y += self.r3Translate
       },
       completion: {_ in
         
@@ -619,9 +681,9 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         self.recordingStatusLight.isHidden = true
         
         // reset heights
-        self.response1.frame.origin.y -= self.r1Translate!
-        self.response2.frame.origin.y -= self.r2Translate!
-        self.response3.frame.origin.y -= self.r3Translate!
+        self.response1.frame.origin.y -= self.r1Translate
+        self.response2.frame.origin.y -= self.r2Translate
+        self.response3.frame.origin.y -= self.r3Translate
         
         self.addStoryView(node: node)
         
@@ -631,13 +693,14 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   
   @IBAction func responseSelected(sender: AnyObject) {
     
+    
     UIView.animate(
       withDuration: 0.5,
       delay: 0.0,
       options: [.curveEaseInOut],
       animations: {
         
-        self.response1.frame.origin.y += self.r1Translate!
+        self.response1.frame.origin.y += self.r1Translate
         
       }, completion: nil)
     
@@ -647,7 +710,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
       delay: 0.25,
       options: [.curveEaseInOut],
       animations: {
-        self.response2.frame.origin.y += self.r2Translate!
+        self.response2.frame.origin.y += self.r2Translate
       }, completion: nil)
     
     UIView.animate(
@@ -655,7 +718,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
       delay: 0.5,
       options: [.curveEaseInOut],
       animations: {
-        self.response3.frame.origin.y += self.r3Translate!
+        self.response3.frame.origin.y += self.r3Translate
       },
       completion: {_ in
         
@@ -663,11 +726,11 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         self.recordingStatusLight.isHidden = true
         
         // reset heights
-        self.response1.frame.origin.y -= self.r1Translate!
-        self.response2.frame.origin.y -= self.r2Translate!
-        self.response3.frame.origin.y -= self.r3Translate!
+        self.response1.frame.origin.y -= self.r1Translate
+        self.response2.frame.origin.y -= self.r2Translate
+        self.response3.frame.origin.y -= self.r3Translate
         
-        print("stm: selected response # \(sender.tag!)")
+        // print("stm: selected response # \(sender.tag!)")
         var responseId = 1
         switch(sender.tag) {
           case 1:
@@ -699,15 +762,59 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     self.resetAndInitializeStoryView()
     // self.restartButton.isHidden = true
   }
+
+  @IBAction func butanButtonTapped() {
+    print("butan tapped")
+    
+    setScrollBottomInset(amount: 200.0)
+
+  }
+  
+  func setScrollBottomInset(amount: CGFloat, animated: Bool = true) {
+    print("setScrollBottomInset \(amount), animated \(animated)")
+    
+    if animated {
+
+      self.view.layoutIfNeeded()
+      UIView.animate(
+        withDuration: 0.5,
+        delay: 0.0,
+        options: [.curveEaseInOut],
+        animations: {
+          // add contentInset on bottom
+          self.storyScrollView.contentInset = UIEdgeInsets(top: 0.0, left: 0, bottom: amount, right: 0)
+          
+          // scroll it to bottom via contentOffset
+          self.scrollViewToBottom(animated: false)
+          
+          self.view.layoutIfNeeded()
+          
+        }, completion: nil)
+
+    } else {
+      // add content inset on bottom
+      self.storyScrollView.contentInset = UIEdgeInsets(top: 0.0, left: 0, bottom: amount, right: 0)
+      
+      // scroll it to bottom
+      self.scrollViewToBottom(animated: false)
+    }
+    
+  }
   
   func resetAndInitializeStoryView(firstTime: Bool = false) {
     print("resetAndInitializeStoryView")
+    
+    // stop audio
+    self.playerNode.stop()
     
     // clear storyScrollView
     if !firstTime {
       for subview in storyScrollView.subviews {
         subview.removeFromSuperview()
       }
+      // reset content inset
+      self.storyScrollView.contentInset = self.storyScrollViewDefaultInsets
+
     }
 
     // set responses off screen to animate onscreen in viewDidAppear()

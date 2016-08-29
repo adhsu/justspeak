@@ -12,12 +12,14 @@ class StoryTextView: UITextView {
 
   var id: Int?
   var speaker: String?
+  var theText: String?
   
   convenience init(text: String, speaker: String, id: Int) {
     self.init(frame: CGRect.zero, textContainer: nil)
     
     self.id = id
     self.speaker = speaker
+    self.theText = text
     
     // standard attributes
     self.backgroundColor = UIColor.clear
@@ -34,7 +36,6 @@ class StoryTextView: UITextView {
     // debug: add border
     // self.layer.borderColor = UIColor(red:0.00, green:0.00, blue:0.00, alpha:0.1).cgColor
     // self.layer.borderWidth = 1.0
-    
     
     // IMAGE, return here
     if speaker.lowercased() == "picture" {
@@ -71,7 +72,7 @@ class StoryTextView: UITextView {
           NSFontAttributeName: UIFont(name: "Georgia", size: 22.0)!
           ], range: NSMakeRange(0, attrString.length))
       
-        self.textContainerInset = UIEdgeInsets(top: 40.0, left: 0, bottom: 40.0, right: 0)
+        self.textContainerInset = UIEdgeInsets(top: 80.0, left: 0, bottom: 40.0, right: 0)
       
       
 
@@ -81,7 +82,7 @@ class StoryTextView: UITextView {
           NSFontAttributeName: UIFont(name: "Georgia", size: 16.0)!
           ], range: NSMakeRange(0, attrString.length))
         
-        self.textContainerInset = UIEdgeInsets(top: 90.0, left: 0, bottom: 80.0, right: 0)
+        self.textContainerInset = UIEdgeInsets(top: 90.0, left: 0, bottom: 35.0, right: 0)
       
       
       case "narrator":
@@ -156,8 +157,8 @@ class StoryTextView: UITextView {
     self.alpha = 0
     
     if self.speaker!.lowercased() == "picture" {
-      
-      let image = UIImage(named: "title-1.png")
+      print("now showing picture \(self.theText)")
+      let image = UIImage(named: "images/story/\(self.theText!)")
       let imageView = UIImageView(image: image)
       imageView.contentMode = .scaleAspectFit
       self.addSubview(imageView)
@@ -168,8 +169,8 @@ class StoryTextView: UITextView {
       imageView.frame.size.height /= scaleFactor
       
       // set frame size with padding
-      let topPadding: CGFloat = 20
-      let bottomPadding: CGFloat = 80
+      let topPadding: CGFloat = 50
+      let bottomPadding: CGFloat = 50
       
       self.frame.size.width = imageView.frame.size.width
       self.frame.size.height = imageView.frame.size.height + topPadding + bottomPadding
@@ -180,7 +181,7 @@ class StoryTextView: UITextView {
     
     // if h2, add the broomstick after h2 frame has been sized
     if self.speaker!.lowercased() == "h2" {
-      let image = UIImage(named: "broomstick.png")
+      let image = UIImage(named: "images/broomstick.png")
       let imageView = UIImageView(image: image)
       imageView.contentMode = .scaleAspectFit
       self.addSubview(imageView)
