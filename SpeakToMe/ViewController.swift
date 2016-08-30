@@ -48,7 +48,8 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   var audioStopped: Bool = true
   
   var paused: Bool = false
-  let delayIfNoAudio: Double = 2.0
+  let delayIfNoAudio: Double = 0.4
+  let delayTitle: Double = 1.5
   let delayBeforeNewScene: Double = 1.0
   
   let greenColor: UIColor = UIColor(red:11/255.0, green:116/255.0, blue:57/255.0, alpha:1.0)
@@ -190,9 +191,24 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
       
     } else { // audio file not found
       // print("cannot find audio file for node \(node.id)")
-      delay(seconds: self.delayIfNoAudio) {
-        self.goNext()
+      
+      switch node.speaker.lowercased() {
+        case "h1", "h2", "picture":
+          delay(seconds: self.delayTitle) {
+            self.goNext()
+          }
+        default:
+          delay(seconds: self.delayIfNoAudio) {
+            self.goNext()
+          }
       }
+      
+      
+      
+      
+      
+      
+      
     }
     
   }
@@ -454,7 +470,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         backgroundAudioNode.scheduleBuffer(audioFileBuffer, at: nil, options: .loops, completionHandler: nil)
         self.backgroundAudioNode.play()
         self.backgroundFaderNode = FaderNode(playerNode: backgroundAudioNode)
-        self.backgroundFaderNode?.fade(fromVolume: 0, toVolume: 0.05)
+        self.backgroundFaderNode?.fade(fromVolume: 0, toVolume: 0.025)
         
         
       } catch let err as NSError {

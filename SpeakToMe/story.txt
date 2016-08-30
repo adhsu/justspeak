@@ -1,4 +1,4 @@
-1: (H1) ACT ONE, SCENE ONE -> 2
+1: (H1) ACT ONE, SCENE ONE -> 23
 2: (music) scene_1_music.mp3 -> 3
 3: (startmusicloop) scene_1_background.mp3 -> 4
 4: (H2) KING'S CROSS STATION -> 5
@@ -30,7 +30,7 @@
 
 31: (picture) express.jpg -> 32
 32: (NARRATOR) Instead of people in sharp suits going about their day, the platform is now full of wizards and witches in robes mostly trying to work out how to say good-bye to their beloved children. [34,35,36]
-34: (ALBUS) Wow, this is it. Platform 9 3/4. -> 37
+34: (ALBUS) Wow, this is it. Platform nine and three quarters. -> 37
 35: (ALBUS) Mom, I am really thinking we might want to wait a year... -> 37
 36: (ALBUS) I see Uncle Ron! -> 37
 37: (LILY) Where are they? Are they here? Maybe they didn't come? -> 39
