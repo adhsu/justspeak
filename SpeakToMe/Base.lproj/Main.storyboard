@@ -68,7 +68,7 @@
                             </stackView>
                             <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VAl-XJ-JJP" userLabel="select resp1">
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="30" id="eY8-dj-xoe"/>
+                                    <constraint firstAttribute="width" constant="60" id="eY8-dj-xoe"/>
                                     <constraint firstAttribute="height" constant="30" id="k1u-Go-Vn0"/>
                                 </constraints>
                                 <connections>
@@ -77,7 +77,7 @@
                             </button>
                             <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="muP-ye-Rxy" userLabel="select resp2">
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="30" id="PxP-jG-9xF"/>
+                                    <constraint firstAttribute="width" constant="60" id="PxP-jG-9xF"/>
                                     <constraint firstAttribute="height" constant="30" id="Wq5-o3-VeB"/>
                                 </constraints>
                                 <connections>
@@ -86,7 +86,7 @@
                             </button>
                             <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="krc-rL-AIi" userLabel="select resp3">
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="30" id="DLA-nP-jBh"/>
+                                    <constraint firstAttribute="width" constant="60" id="DLA-nP-jBh"/>
                                     <constraint firstAttribute="height" constant="30" id="eq4-lO-qe5"/>
                                 </constraints>
                                 <connections>

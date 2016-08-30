@@ -225,6 +225,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
             self.goNext()
           }
         default:
+          
           delay(seconds: self.delayIfNoAudio) {
             self.goNext()
           }
@@ -492,7 +493,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
         backgroundAudioNode.scheduleBuffer(audioFileBuffer, at: nil, options: .loops, completionHandler: nil)
         self.backgroundAudioNode.play()
         self.backgroundFaderNode = FaderNode(playerNode: backgroundAudioNode)
-        self.backgroundFaderNode?.fade(fromVolume: 0, toVolume: 0.025)
+        self.backgroundFaderNode?.fade(fromVolume: 0, toVolume: 0.1)
         
         
       } catch let err as NSError {
