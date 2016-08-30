@@ -2,7 +2,7 @@ import UIKit
 import Speech
 import AVFoundation
 
-public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
+public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScrollViewDelegate {
   
   // speech rec properties
   private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
@@ -46,6 +46,10 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   var nodes: [Int: Node] = [:] // dictionary of nodes, will construct in viewDidLoad
   var recordingStopped: Bool = true
   var audioStopped: Bool = true
+  var showingResponses: Bool = false
+  var currentScrollOffset: CGFloat = 0
+  var originalResponseStackY: CGFloat = 0
+  
   
   var paused: Bool = false
   let delayIfNoAudio: Double = 0.4
@@ -136,11 +140,34 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     constructNodesDict(dataArr)
     // print(nodes)
     
-    
-    
-
-
   }
+  
+  
+  public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    // print("scrolled, offset is \(scrollView.contentOffset)")
+    
+    if self.showingResponses {
+      // print("self.currentScrollOffset \(self.currentScrollOffset)")
+      // print(scrollView.contentOffset.y - self.currentScrollOffset)
+      let offset = scrollView.contentOffset.y - self.currentScrollOffset
+      
+      if offset < 0 {
+        print("offset is \(offset)")
+        print("responsestack y is \(self.responseStack.frame.origin.y)")
+        
+        self.responseStack.frame.origin.y = self.originalResponseStackY - offset
+        self.recordingStatusLight.frame.origin.y = self.originalResponseStackY - (16+12) - offset // light is 16px above responseStack and 12px high
+        // self.view.layoutIfNeeded()
+      } else {
+        self.responseStack.frame.origin.y = self.originalResponseStackY
+        self.recordingStatusLight.frame.origin.y = self.originalResponseStackY - (16+12) // light is 16px above responseStack and 12px high
+
+      }
+      
+    }
+    
+  }
+  
   
   func goNext() {
     print("gonext")
@@ -202,13 +229,6 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             self.goNext()
           }
       }
-      
-      
-      
-      
-      
-      
-      
     }
     
   }
@@ -239,6 +259,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     
     // speech stuff
     speechRecognizer.delegate = self
+    storyScrollView.delegate = self
     
     SFSpeechRecognizer.requestAuthorization { authStatus in
         /*
@@ -426,8 +447,9 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     print("scrolling to bottom, animated \(animated)")
     let bottomOffset = storyScrollView.contentSize.height - storyScrollView.frame.size.height + storyScrollView.contentInset.bottom
     let bottomOffsetPt: CGPoint = CGPoint(x: 0, y: bottomOffset)
-
+    
     if bottomOffset > 0 {
+      self.currentScrollOffset = bottomOffset
       self.storyScrollView.setContentOffset(bottomOffsetPt, animated: animated)
     }
     
@@ -676,13 +698,13 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
   func setResponses(_ responses: [Int]) {
     
+    self.showingResponses = true
+    
     // start listening immediately, then animate responses in
     if self.recordingStopped {
       try! self.startListeningLoop()
     }
     
-
-
     let response1Node = nodes[responses[0]]!
     let response2Node = nodes[responses[1]]!
     let response3Node = nodes[responses[2]]!
@@ -691,6 +713,10 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     response2.attributedText = createAttrString(text: response2Node.text)
     response3.attributedText = createAttrString(text: response3Node.text)
     self.view.layoutIfNeeded() // update height of responseStack after new text has been added
+    self.originalResponseStackY = self.responseStack.frame.origin.y
+    print("response stack y is \(self.originalResponseStackY)")
+    
+    
     response1.id = response1Node.id
     response2.id = response2Node.id
     response3.id = response3Node.id
@@ -762,7 +788,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
   
   func responseSelectedByAudio(node: Node) {
-
+    self.showingResponses = false
     self.currentNodeId = node.id // advance currentNode forward
     self.stopListeningLoop()
 
@@ -811,7 +837,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   }
   
   @IBAction func responseSelected(sender: AnyObject) {
-    
+    self.showingResponses = false
     self.stopListeningLoop()
     
     UIView.animate(
