@@ -145,7 +145,7 @@
 				TargetAttributes = {
 					7539A46C1CE7A57600505E8B = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = DKPZ9587CM;
+						DevelopmentTeam = 5C895685RF;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -320,7 +320,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = DKPZ9587CM;
+				DEVELOPMENT_TEAM = 5C895685RF;
 				INFOPLIST_FILE = SpeakToMe/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.clamor.SpeakToMe;
@@ -334,7 +334,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = DKPZ9587CM;
+				DEVELOPMENT_TEAM = 5C895685RF;
 				INFOPLIST_FILE = SpeakToMe/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.clamor.SpeakToMe;

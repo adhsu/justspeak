@@ -259,13 +259,10 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
   private func matchScore(bestGuess: String, node: Node) -> Int {
     // Fuzzy match between transcription and children
-    var count: Int = 0
-
-    let splitResponse: Array = node.text.characters.split{$0 == " "}.map(String.init) // list of words in the response text
-    let realResponseWords = splitResponse.filter { $0.characters.count >= 3 } // filter to words >= 4 chars in length
+    let bestGuess = bestGuess.characters.split{$0 == " "}.map(String.init) // split into array
+    let realWordsInGuess = bestGuess.filter{ $0.characters.count >= 3 } // remove any word less than 3 characters long
+    let count = realWordsInGuess.filter({ (node.text.lowercased().range(of: $0.lowercased()) != nil) }).count
     
-    count = realResponseWords.filter({ (bestGuess.lowercased().range(of: $0.lowercased()) != nil) }).count // count real words that are in bestGuess
-    // print("bestGuess \(bestGuess), node text \(node.text), count is \(count)")
     return count
   }
   
@@ -306,11 +303,11 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             let responseNode = self.nodes[responseId]!
             let matchCount = self.matchScore(bestGuess: bestGuess, node: responseNode) // matchScore is the total number of words we've matched
             
-            if highestMatch.matchCount < matchCount { // this new dialog option is the best match so far
+            if highestMatch.matchCount < matchCount, highestMatch.index != idx { // this new dialog option is the best match so far
               
-
               highestMatch = (idx, matchCount)
               print("new highest match idx \(idx)")
+              self.clearResponseHighlights()
               // print("new highest match: \(responseNode.text)")
             }
           }
@@ -327,7 +324,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
               let dialogCount: Int = highlightedResponseNode.text.characters.count
               let transcriptCount = bestGuess.characters.count - randomChatterIdx
               
-              print("dialog chars: \(dialogCount), transcript chars: \(transcriptCount)")
+              // print("dialog chars: \(dialogCount), transcript chars: \(transcriptCount)")
               self.setResponseHighlight(responseIdx: highestMatch.index!, count: min(dialogCount, transcriptCount))
               
               let completionPercentage: Float = Float(transcriptCount)/Float(dialogCount)
@@ -597,7 +594,35 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     
   }
   
-
+  func clearResponseHighlights() {
+    print("clear response highlights")
+    let newAttrString = NSMutableAttributedString(attributedString: response1.attributedText)
+    print(response1.text.characters.count)
+    
+    newAttrString.addAttribute(
+      NSForegroundColorAttributeName,
+      value: self.fadeGrayColor,
+      range: NSMakeRange(0, response1.text.characters.count))
+    response1.attributedText = newAttrString
+    
+    let newAttrString2 = NSMutableAttributedString(attributedString: response2.attributedText)
+    newAttrString2.addAttribute(
+      NSForegroundColorAttributeName,
+      value: self.fadeGrayColor,
+      range: NSMakeRange(0, response2.text.characters.count))
+    response2.attributedText = newAttrString2
+    
+    let newAttrString3 = NSMutableAttributedString(attributedString: response3.attributedText)
+    newAttrString3.addAttribute(
+      NSForegroundColorAttributeName,
+      value: self.fadeGrayColor,
+      range: NSMakeRange(0, response3.text.characters.count))
+    response3.attributedText = newAttrString3
+    
+    
+  }
+  
+  
   func setResponseHighlight(responseIdx: Int, count: Int) {
     // print("set response highlight: idx \(responseIdx) count \(count)")
     let range = NSMakeRange(0, count)
@@ -610,7 +635,6 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
           value: self.lightGreenColor,
           range: range)
         
-
         response1.attributedText = newAttrString
       case 1:
         let newAttrString = NSMutableAttributedString(attributedString: response2.attributedText)
