@@ -90,7 +90,7 @@ class StoryTextView: UITextView {
           NSParagraphStyleAttributeName: narratorPs,
           NSFontAttributeName: UIFont(name: "Georgia-Italic", size: 14.0)!
         ], range: NSMakeRange(0, attrString.length))
-        self.textContainerInset = UIEdgeInsets(top: 10.0, left: 0, bottom: 30.0, right: 0)
+        self.textContainerInset = UIEdgeInsets(top: 30.0, left: 0, bottom: 30.0, right: 0)
         
       case "albus": // user
         addAuthorName(name: "you", attrString: attrString)
@@ -169,8 +169,8 @@ class StoryTextView: UITextView {
       imageView.frame.size.height /= scaleFactor
       
       // set frame size with padding
-      let topPadding: CGFloat = 50
-      let bottomPadding: CGFloat = 50
+      let topPadding: CGFloat = 30
+      let bottomPadding: CGFloat = 30
       
       self.frame.size.width = imageView.frame.size.width
       self.frame.size.height = imageView.frame.size.height + topPadding + bottomPadding

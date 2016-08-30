@@ -5,8 +5,8 @@
 5: (picture) potter.jpg -> 10
 10: (NARRATOR) You are in a busy and crowded train station. It is full of people trying to go somewhere. Amongst the busyness, there is a family dressed in slightly peculiar robes. There are two sons, JAMES POTTER and ALBUS POTTER, who are pushing two overflowing carts. Their mother, GINNY, follows after. A thirty-seven-year-old man, HARRY, has his daughter, LILY, on his shoulders. -> 12
 12: (Ginny) We'll write to you every day ALBUS! [13,14,15]
-13: (ALBUS) No. Not every day. James says most people only get letters from home about once a month. Airplanes helicopter submarine.-> 17
-14: (ALBUS) You better! Burgers tasty cheese tacos. -> 17
+13: (ALBUS) No. Not every day. James says most people only get letters from home about once a month. -> 17
+14: (ALBUS) You better! -> 17
 15: (ALBUS) Mom, I'm 12 years old now. I'm no longer a little kid. -> 17
 16: (HARRY) We wrote to your brother three times a week last year. Don't believe everything your brother says about Hogwarts, Albus. -> 17
 17: (JAMES) Can we go now please? [18, 19, 20]
@@ -86,6 +86,7 @@
 87: (ALBUS) Let's just find a compartment and sit in it like everyone else. -> 89
 
 89: (picture) scorpius.jpg -> 91
+
 91: (NARRATOR) The cabin opens with a soft sound, revealing a single blonde headed boy sitting alone. [93,94,95]
 93: (ALBUS) Hi. Is this compartment open? -> 96
 94: (ALBUS) Hey - what's your name? -> 97
@@ -131,7 +132,7 @@
 138: (ALBUS) What do you mean you know who I am? -> 141
 139: (ALBUS) I hate being the son of the most famous Wizard in the world. -> 141
 140: (ALBUS) How could it possibly matter who you are? It's the first day of school! -> 141
-141: (SCORPIUS) You're Albus Potter. She's Rose Granger-Weasley. And I am Scorpius Malfoy. My parents are Astoria and Draco Malfoy. Our parents - they didn't like each other. -> 142
+141: (SCORPIUS) You're Albus Potter. She's Rose Granger-Weasley. And I am Scorpius Malfoy. My parents are Astoria and Draco Malfor. Our parents - they didn't like each other. -> 142
 142: (ROSE) That's putting it mildly. Your mum and dad are Death Eaters! -> 143
 143: (Scorpius) {affronted} Dad was but Mum wasn't! -> 144
 144: (ROSE) Your father and his goons were responsible for many of our parents closest friend's deaths! That's not something to just forgive so easily. -> 145
