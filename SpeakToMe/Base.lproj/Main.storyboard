@@ -109,22 +109,42 @@
                                     <action selector="butanButtonTapped" destination="BYZ-38-t0r" eventType="touchUpInside" id="DRw-v2-8O9"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" alpha="0.20000000000000001" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="33h-gh-s8h">
+                            <button opaque="NO" alpha="0.10000000000000001" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="33h-gh-s8h">
                                 <constraints>
                                     <constraint firstAttribute="height" constant="18" id="MGh-yw-b5f"/>
                                     <constraint firstAttribute="width" constant="21" id="a3a-Ez-TxI"/>
                                 </constraints>
                                 <state key="normal" image="refresh.png"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JKk-XH-sIK" userLabel="Restart Button tap zone">
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="AK3-VS-CNJ"/>
+                                    <constraint firstAttribute="height" constant="50" id="IvZ-Kb-9Ec"/>
+                                </constraints>
                                 <connections>
-                                    <action selector="restartButtonTapped" destination="BYZ-38-t0r" eventType="touchUpInside" id="JX6-bN-RdS"/>
+                                    <action selector="restartButtonTapped" destination="BYZ-38-t0r" eventType="touchUpInside" id="ogf-Sn-BVJ"/>
                                 </connections>
                             </button>
-                            <button hidden="YES" opaque="NO" alpha="0.20000000298023224" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t1i-Q7-sCx" userLabel="Pause Button">
+                            <button opaque="NO" alpha="0.10000000000000001" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iFx-la-VdC" userLabel="Pause Button">
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="18" id="NTD-un-LLN"/>
-                                    <constraint firstAttribute="width" constant="12" id="cl2-GE-ftM"/>
+                                    <constraint firstAttribute="height" constant="18" id="Xme-f1-eNb"/>
+                                    <constraint firstAttribute="width" constant="12" id="aJl-My-0l1"/>
                                 </constraints>
                                 <state key="normal" image="pause.png"/>
+                            </button>
+                            <button hidden="YES" opaque="NO" alpha="0.10000000149011612" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zFU-MZ-J1e" userLabel="Play Button">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="18" id="jfH-Zl-bgO"/>
+                                    <constraint firstAttribute="width" constant="15" id="yfJ-ut-gEy"/>
+                                </constraints>
+                                <state key="normal" image="play.png"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t1i-Q7-sCx" userLabel="Pause Button tap zone">
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="NTD-un-LLN"/>
+                                    <constraint firstAttribute="width" constant="50" id="cl2-GE-ftM"/>
+                                </constraints>
                                 <connections>
                                     <action selector="pauseButtonTapped" destination="BYZ-38-t0r" eventType="touchUpInside" id="EiR-BT-Rwt"/>
                                 </connections>
@@ -133,7 +153,9 @@
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="bYh-90-i9H" secondAttribute="bottom" identifier="storyScrollViewBottom" id="2Fy-bQ-vgu"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="iFx-la-VdC" secondAttribute="trailing" constant="-3" id="4x9-eN-faT"/>
                             <constraint firstItem="33h-gh-s8h" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="10" id="6KM-9N-FYB"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="t1i-Q7-sCx" secondAttribute="trailing" constant="-16" id="735-XS-VeA"/>
                             <constraint firstItem="bYh-90-i9H" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="8hb-uS-pzy"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="LtB-Ba-LX6" secondAttribute="bottom" id="95R-ez-xwz"/>
                             <constraint firstItem="LtB-Ba-LX6" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="9eo-Xt-lZV"/>
@@ -141,22 +163,28 @@
                             <constraint firstAttribute="trailingMargin" secondItem="krc-rL-AIi" secondAttribute="trailing" constant="-16" id="Hqw-MY-r44"/>
                             <constraint firstItem="krc-rL-AIi" firstAttribute="centerY" secondItem="qKu-00-qrW" secondAttribute="centerY" id="ILe-q2-e4l"/>
                             <constraint firstAttribute="trailingMargin" secondItem="CJx-fd-Rly" secondAttribute="trailing" id="Kec-uU-019"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="33h-gh-s8h" secondAttribute="trailing" constant="-10" id="Nk2-e4-sHK"/>
                             <constraint firstItem="7xe-MP-Nm9" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="O8K-HY-ddC"/>
                             <constraint firstItem="VAl-XJ-JJP" firstAttribute="centerY" secondItem="PeM-E5-QCe" secondAttribute="centerY" id="PTO-yB-zvl"/>
+                            <constraint firstItem="33h-gh-s8h" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-6" id="SOb-uT-FQK"/>
                             <constraint firstAttribute="trailingMargin" secondItem="bYh-90-i9H" secondAttribute="trailing" id="ThE-o6-Tfl"/>
-                            <constraint firstItem="t1i-Q7-sCx" firstAttribute="trailing" secondItem="33h-gh-s8h" secondAttribute="leading" constant="-10" id="U1t-wj-a2Q"/>
                             <constraint firstItem="CJx-fd-Rly" firstAttribute="bottom" secondItem="LtB-Ba-LX6" secondAttribute="top" constant="-16" id="UaL-9i-HYU"/>
+                            <constraint firstItem="JKk-XH-sIK" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="Yxs-EN-iES"/>
                             <constraint firstAttribute="trailingMargin" secondItem="muP-ye-Rxy" secondAttribute="trailing" constant="-16" id="esA-3P-C94"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="zFU-MZ-J1e" secondAttribute="trailing" constant="-6" id="gLo-Hb-kci"/>
+                            <constraint firstItem="JKk-XH-sIK" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="hyv-n7-q2A"/>
                             <constraint firstItem="bYh-90-i9H" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="iD4-dU-1rU"/>
                             <constraint firstAttribute="trailingMargin" secondItem="VAl-XJ-JJP" secondAttribute="trailing" constant="-16" id="lNQ-Xr-HZd"/>
+                            <constraint firstItem="iFx-la-VdC" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="10" id="ofa-6q-3Bt"/>
+                            <constraint firstItem="zFU-MZ-J1e" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="10" id="rvQ-I1-7LC"/>
                             <constraint firstItem="LtB-Ba-LX6" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="tYR-e1-mKU"/>
                             <constraint firstItem="muP-ye-Rxy" firstAttribute="centerY" secondItem="BLy-Uk-nhd" secondAttribute="centerY" id="v38-B0-08S"/>
-                            <constraint firstItem="t1i-Q7-sCx" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="10" id="ySk-K0-Igf"/>
+                            <constraint firstItem="t1i-Q7-sCx" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="ySk-K0-Igf"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="butanButton" destination="7xe-MP-Nm9" id="MmJ-qz-d0I"/>
+                        <outlet property="pauseButton" destination="iFx-la-VdC" id="8HI-Yh-RWz"/>
+                        <outlet property="playButton" destination="zFU-MZ-J1e" id="GK2-tj-By4"/>
                         <outlet property="recordingStatusLight" destination="CJx-fd-Rly" id="J7K-Pu-Ygk"/>
                         <outlet property="response1" destination="PeM-E5-QCe" id="Xqk-EH-7UQ"/>
                         <outlet property="response2" destination="BLy-Uk-nhd" id="17O-Vx-ydm"/>
@@ -173,6 +201,7 @@
     </scenes>
     <resources>
         <image name="pause.png" width="256" height="384"/>
+        <image name="play.png" width="320" height="384"/>
         <image name="refresh.png" width="448" height="384"/>
     </resources>
 </document>

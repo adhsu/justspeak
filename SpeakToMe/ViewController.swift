@@ -26,6 +26,10 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   
   @IBOutlet var butanButton : UIButton!
   @IBOutlet var restartButton : UIButton!
+
+  @IBOutlet var pauseButton : UIButton!
+  @IBOutlet var playButton : UIButton!
+
   @IBOutlet var storyScrollView : UIScrollView!
   let storyScrollViewDefaultInsets = UIEdgeInsets(top: 20.0, left: 0, bottom: 20.0, right: 0)
   
@@ -87,7 +91,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
       audioEngine.attach(self.backgroundAudioNode)
       audioEngine.connect(self.backgroundAudioNode, to: mainMixer!, format: mainMixer?.outputFormat(forBus: 0))
       backgroundAudioNode.volume = 0
-      backgroundFaderNode = FaderNode(playerNode: backgroundAudioNode)
+      
       
       // start audioEngine
       print("start audioEngine")
@@ -434,9 +438,16 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
   func playBackgroundLoop(_ filename: String) {
     print("playing background loop \(filename)")
+    
+    if self.backgroundAudioNode.isPlaying {
+      print("bg audio node is playing, stop it ")
+      self.backgroundAudioNode.stop()
+    }
+    
     if let path = Bundle.main.path(forResource: "music/\(filename)", ofType: nil) {
       let url = NSURL(fileURLWithPath: path)
       do {
+        print("setting up new buffer \(filename), path \(path), url \(url)")
         let audioFile = try AVAudioFile(forReading: url as URL)
         let audioFormat = audioFile.processingFormat
         let audioFrameCount = UInt32(audioFile.length)
@@ -445,7 +456,8 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         
         backgroundAudioNode.scheduleBuffer(audioFileBuffer, at: nil, options: .loops, completionHandler: nil)
         self.backgroundAudioNode.play()
-        self.backgroundFaderNode?.fadeIn()
+        self.backgroundFaderNode = FaderNode(playerNode: backgroundAudioNode)
+        self.backgroundFaderNode?.fade(fromVolume: 0, toVolume: 0.05)
         
         
       } catch let err as NSError {
@@ -455,8 +467,9 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   }
   
   func stopBackgroundLoop() {
+    print("stop bg loop")
     self.backgroundFaderNode?.fadeOut() { finished in
-      self.backgroundAudioNode.stop()
+      // self.backgroundAudioNode.stop()
     }
   }
 
@@ -471,7 +484,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         return
 
       case "startmusicloop":
-        self.playBackgroundLoop("scene1_background.mp3")
+        self.playBackgroundLoop(node.text)
         self.goNext()
         return
 
@@ -833,21 +846,42 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     
     if !self.paused {
       print("pausing")
-      self.audioStopped = true
-      self.playerNode.stop()
+      self.paused = true
+      self.playButton.isHidden = false
+      self.pauseButton.isHidden = true
+      
+      // pause all audio player nodes
+      self.playerNode.pause()
       self.musicNode.pause()
       self.backgroundAudioNode.pause()
-      self.paused = true
+      
+      // stop listening
+      if let node = self.nodes[self.currentNodeId], let responses = node.responses {
+        print("node has responses, stop listening")
+        self.stopListeningLoop()
+      }
+        
+      
+
     } else {
       print("resuming")
+      self.paused = false
+      self.playButton.isHidden = true
+      self.pauseButton.isHidden = false
       
-      if let node = self.nodes[self.currentNodeId] {
-        self.playAudio(node: node)
-      }
-      
+      // resume all audio player nodes
+      self.playerNode.play()
       self.musicNode.play()
       self.backgroundAudioNode.play()
-      self.paused = false
+      
+      // resume listening
+      if let node = self.nodes[self.currentNodeId], let responses = node.responses {
+        print("node has responses, start listening")
+        if self.recordingStopped {
+          try! self.startListeningLoop()
+        }
+      }
+
     }
     
   }
@@ -891,6 +925,11 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   func resetAndInitializeStoryView(firstTime: Bool = false) {
     print("resetAndInitializeStoryView")
     
+    // reset pause state    
+    self.paused = false
+    self.playButton.isHidden = true
+    self.pauseButton.isHidden = false
+
     // stop audio, music, background loops
     self.audioStopped = true
     self.playerNode.stop()
@@ -918,7 +957,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     
     // add first node to view
     if let node = self.nodes[self.currentNodeId] {
-      processNode(node: node)
+      self.processNode(node: node)
     }
   }
 

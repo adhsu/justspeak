@@ -1,6 +1,6 @@
 1: (H1) ACT ONE, SCENE ONE -> 2
-2: (music) scene1.mp3 -> 3
-3: (startmusicloop) scene1_background.mp3 -> 4
+2: (music) scene_1_music.mp3 -> 3
+3: (startmusicloop) scene_1_background.mp3 -> 4
 4: (H2) KING'S CROSS STATION -> 5
 5: (picture) potter.jpg -> 10
 10: (NARRATOR) You are in a busy and crowded train station. It is full of people trying to go somewhere. Amongst the busyness, there is a family dressed in slightly peculiar robes. There are two sons, JAMES POTTER and ALBUS POTTER, who are pushing two overflowing carts. Their mother, GINNY, follows after. A thirty-seven-year-old man, HARRY, has his daughter, LILY, on his shoulders. -> 12
@@ -17,15 +17,17 @@
 22: (HARRY) Ok, let's do this! Remember don't stop and don't be scared you'll crash into it, that's very important. Best do it at a run if you're nervous. -> 23
 23: (ALBUS) I'm ready. -> 24
 
-24: (music) scene2.mp3 -> 25
+24: (music) scene_2_music.mp3 -> 25
 25: (picture) platform.jpg -> 26
 
 26: (NARRATOR) The family interlocks their hands and runs hard into the barrier together. -> 27
 
 27: (H1) ACT ONE, SCENE TWO -> 28
-28: (H2) PLATFORM NINE AND THREE-QUARTERS -> 29
+28: (H2) PLATFORM NINE AND THREE-QUARTERS -> 30
 
-29: (stopmusicloop) scene1_background.mp3 -> 31
+30: (startmusicloop) scene_2_background.mp3 -> 31
+
+
 31: (picture) express.jpg -> 32
 32: (NARRATOR) Instead of people in sharp suits going about their day, the platform is now full of wizards and witches in robes mostly trying to work out how to say good-bye to their beloved children. [34,35,36]
 34: (ALBUS) Wow, this is it. Platform 9 3/4. -> 37
@@ -53,11 +55,11 @@
 58: (HERMIONE) Rose. Remember to send Neville our love. -> 59
 59: (ROSE) Mom, I can't give a professor love! -> 60
 
-60: (music) scene_3_music2.mp3 -> 61
+60: (music) scene_3_music.mp3 -> 61
 
-61: (NARRATOR) Rose exits for the train. Your hug your family one last time before following after her. -> 68
+61: (NARRATOR) Rose exits for the train. Your hug your family one last time before following after her. -> 65
 
-
+65: (stopmusicloop) scene_2_background.mp3 -> 68
 68: (startmusicloop) scene_3_background.mp3 -> 69
 
 69: (picture) choochoo.jpg -> 63

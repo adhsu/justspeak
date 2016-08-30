@@ -65,7 +65,7 @@ public class FaderNode: NSObject {
     self.onFinished = onFinished
     
     
-    print("volume to \( Float(self.fromVolume) ) (fade)")
+    // print("volume to \( Float(self.fromVolume) ) (fade)")
     playerNode.volume = Float(self.fromVolume)
     
     if self.fromVolume == self.toVolume {
@@ -103,7 +103,7 @@ public class FaderNode: NSObject {
   
   func timerFired(_ timer: Timer) {
     if shouldStopTimer {
-      print("volume to \( Float(toVolume) ) (tovolume, timerFired)")
+      // print("volume to \( Float(toVolume) ) (tovolume, timerFired)")
       playerNode.volume = Float(toVolume)
       stopTimer()
       callOnFinished(true)
@@ -130,7 +130,7 @@ public class FaderNode: NSObject {
       newVolume = toVolume - (toVolume - fromVolume) * volumeMultiplier
     }
     
-    print("volume to \( Float(newVolume) ) (newvolume, timerFired)")
+    // print("volume to \( Float(newVolume) ) (newvolume, timerFired)")
     playerNode.volume = Float(newVolume)
     
     currentStep += 1
