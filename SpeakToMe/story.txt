@@ -1,7 +1,8 @@
 1: (H1) ACT ONE, SCENE ONE -> 2
-2: (H2) KING'S CROSS STATION -> 3
-3: (music) scene1.mp3 -> 4
-4: (picture) potter.jpg -> 12
+2: (music) scene1.mp3 -> 3
+3: (startmusicloop) scene1_background.mp3 -> 4
+4: (H2) KING'S CROSS STATION -> 5
+5: (picture) potter.jpg -> 10
 10: (NARRATOR) You are in a busy and crowded train station. It is full of people trying to go somewhere. Amongst the busyness, there is a family dressed in slightly peculiar robes. There are two sons, JAMES POTTER and ALBUS POTTER, who are pushing two overflowing carts. Their mother, GINNY, follows after. A thirty-seven-year-old man, HARRY, has his daughter, LILY, on his shoulders. -> 12
 12: (Ginny) We'll write to you every day ALBUS! [13,14,15]
 13: (ALBUS) No. Not every day. James says most people only get letters from home about once a month. -> 17
@@ -15,17 +16,26 @@
 21: (NARRATOR) HARRY pretends he didn't hear you... -> 22
 22: (HARRY) Ok, let's do this! Remember don't stop and don't be scared you'll crash into it, that's very important. Best do it at a run if you're nervous. -> 23
 23: (ALBUS) I'm ready. -> 24
-24: (picture) platform.jpg -> 25
-25: (NARRATOR) The family interlocks their hands and runs hard into the barrier together. The family interlocks their hands and runs hard into the barrier together. The family interlocks their hands and runs hard into the barrier together. -> 27
+
+24: (music) scene2.mp3 -> 25
+25: (picture) platform.jpg -> 26
+
+26: (NARRATOR) The family interlocks their hands and runs hard into the barrier together. -> 27
+
 27: (H1) ACT ONE, SCENE TWO -> 28
-28: (H2) PLATFORM NINE AND THREE-QUARTERS -> 32
+28: (H2) PLATFORM NINE AND THREE-QUARTERS -> 29
+
+29: (stopmusicloop) scene1_background.mp3 -> 31
+31: (picture) express.jpg -> 32
 32: (NARRATOR) Instead of people in sharp suits going about their day, the platform is now full of wizards and witches in robes mostly trying to work out how to say good-bye to their beloved children. [34,35,36]
 34: (ALBUS) Wow, this is it. Platform 9 3/4. -> 37
 35: (ALBUS) Mom, I am really thinking we might want to wait a year... -> 37
 36: (ALBUS) I see Uncle Ron! -> 37
 37: (LILY) Where are they? Are they here? Maybe they didn't come? -> 39
 39: (NARRATOR) HARRY points out RON, HERMIONE, and their daughter, ROSE. LILY runs hard up to them. -> 41
-41: (LILY) Uncle Ron. Uncle Ron!!! -> 42
+41: (LILY) Uncle Ron. Uncle Ron!!! -> 62
+62: (picture) reunion.jpg -> 42
+
 42: (NARRATOR) RON turns towards them as LILY goes barreling up to him. He picks her up into his arms. -> 43
 43: (RON) If it isn't my favorite Potter. -> 45
 45: (NARRATOR) You start to get anxious when you think about the sorting hat's decision tonight. You pull on HARRY's robes. HARRY looks down. -> 47
@@ -41,13 +51,22 @@
 56: (HARRY) Remember, the sorting hat is there for a reason. You are going to love Hogwarts so much. -> 57
 57: (LILY) Albus, if you don't want this train to leave without you, you should probably leap on! -> 58
 58: (HERMIONE) Rose. Remember to send Neville our love. -> 59
-59: (ROSE) Mom, I can't give a professor love! -> 61
-61: (NARRATOR) Rose exits for the train. Your hug your family one last time before following after her. -> 63
+59: (ROSE) Mom, I can't give a professor love! -> 60
+
+60: (music) scene_3_music2.mp3 -> 61
+
+61: (NARRATOR) Rose exits for the train. Your hug your family one last time before following after her. -> 68
+
+
+68: (startmusicloop) scene_3_background.mp3 -> 69
+
+69: (picture) choochoo.jpg -> 63
 63: (H1) ACT ONE, SCENE THREE -> 64
 64: (H2) THE HOGWARTS EXPRESS -> 67
+
 67: (NARRATOR) You walk along the carriage of the train with Rose. The TROLLEY WITCH approaches, pushing her trolley. -> 71
 71: (TROLLEY WITCH) Anything from the trolley, dears? Pumpkin Pasty? Chocolate Frog? Cauldron Cake? -> 72
-72: (ROSE) {spotting ALBUS's loving look at the Chocolate Frogs} Albus. We need to concentrate. -> 73
+72: (ROSE) {spotting ALBUS's loving look at the Chocolate Frogs} Albus. We need to concentrate. [73, 75, 77]
 73: (ALBUS) Concentrate on what? -> 74
 74: (ROSE) On who we choose to be friends with.  -> 75
 75: (ALBUS) Agreed! What candy should we eat first? -> 76
@@ -63,7 +82,9 @@
 85: (ALBUS) How do you suggest we decide who to be friends with then. -> 86
 86: (ROSE) We rate them all and then we make a decision. -> 89
 87: (ALBUS) Let's just find a compartment and sit in it like everyone else. -> 89
-89: (NARRATOR) You open the compartment door in front of you and see a lonely blond kid in an otherwise empty compartment. The boy smiles invitingly.  -> 91
+
+89: (picture) scorpius.jpg -> 91
+
 91: (NARRATOR) The cabin opens with a soft sound, revealing a single blonde headed boy sitting alone. [93,94,95]
 93: (ALBUS) Hi. Is this compartment open? -> 96
 94: (ALBUS) Hey - what's your name? -> 97

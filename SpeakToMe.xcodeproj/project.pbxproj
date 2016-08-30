@@ -13,8 +13,11 @@
 		345411E31D64F17500C3A1B2 /* StoryTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345411E21D64F17500C3A1B2 /* StoryTextView.swift */; };
 		345411E51D666E9000C3A1B2 /* story.txt in Resources */ = {isa = PBXBuildFile; fileRef = 345411E41D666E9000C3A1B2 /* story.txt */; };
 		3456EEB51D70CAAE00C6A611 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3456EEB41D70CAAE00C6A611 /* Node.swift */; };
+		347D99B01D74CC2B0096FA3A /* Fader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347D99AF1D74CC2B0096FA3A /* Fader.swift */; };
 		349640CC1D6E5114008B5276 /* audio in Resources */ = {isa = PBXBuildFile; fileRef = 349640CB1D6E5114008B5276 /* audio */; };
+		34A6F1BD1D74CE88003421D7 /* FaderNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A6F1BC1D74CE88003421D7 /* FaderNode.swift */; };
 		34CCF9081D711E9B008C5444 /* images in Resources */ = {isa = PBXBuildFile; fileRef = 34CCF9071D711E9B008C5444 /* images */; };
+		34DB996A1D75009400778F76 /* refresh.png in Resources */ = {isa = PBXBuildFile; fileRef = 34DB99691D75009400778F76 /* refresh.png */; };
 		7539A4711CE7A57600505E8B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7539A4701CE7A57600505E8B /* AppDelegate.swift */; };
 		7539A4731CE7A57600505E8B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7539A4721CE7A57600505E8B /* ViewController.swift */; };
 		7539A4761CE7A57600505E8B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7539A4741CE7A57600505E8B /* Main.storyboard */; };
@@ -29,8 +32,11 @@
 		345411E21D64F17500C3A1B2 /* StoryTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryTextView.swift; sourceTree = "<group>"; };
 		345411E41D666E9000C3A1B2 /* story.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = story.txt; sourceTree = "<group>"; };
 		3456EEB41D70CAAE00C6A611 /* Node.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
+		347D99AF1D74CC2B0096FA3A /* Fader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fader.swift; sourceTree = "<group>"; };
 		349640CB1D6E5114008B5276 /* audio */ = {isa = PBXFileReference; lastKnownFileType = folder; path = audio; sourceTree = "<group>"; };
+		34A6F1BC1D74CE88003421D7 /* FaderNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaderNode.swift; sourceTree = "<group>"; };
 		34CCF9071D711E9B008C5444 /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; path = images; sourceTree = "<group>"; };
+		34DB99691D75009400778F76 /* refresh.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = refresh.png; path = images/refresh.png; sourceTree = "<group>"; };
 		7539A46D1CE7A57600505E8B /* SpeakToMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpeakToMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7539A4701CE7A57600505E8B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7539A4721CE7A57600505E8B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -58,6 +64,8 @@
 				345411E01D64620000C3A1B2 /* Extensions.swift */,
 				345411E21D64F17500C3A1B2 /* StoryTextView.swift */,
 				3456EEB41D70CAAE00C6A611 /* Node.swift */,
+				347D99AF1D74CC2B0096FA3A /* Fader.swift */,
+				34A6F1BC1D74CE88003421D7 /* FaderNode.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -93,6 +101,7 @@
 				345411E41D666E9000C3A1B2 /* story.txt */,
 				7539A4771CE7A57600505E8B /* Assets.xcassets */,
 				7539A4791CE7A57600505E8B /* LaunchScreen.storyboard */,
+				34DB99691D75009400778F76 /* refresh.png */,
 				7539A47C1CE7A57600505E8B /* Info.plist */,
 			);
 			path = SpeakToMe;
@@ -163,6 +172,7 @@
 				7539A4781CE7A57600505E8B /* Assets.xcassets in Resources */,
 				7539A4761CE7A57600505E8B /* Main.storyboard in Resources */,
 				349640CC1D6E5114008B5276 /* audio in Resources */,
+				34DB996A1D75009400778F76 /* refresh.png in Resources */,
 				340299051D725D1A00DFA696 /* music in Resources */,
 				345411E51D666E9000C3A1B2 /* story.txt in Resources */,
 			);
@@ -176,6 +186,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				7539A4731CE7A57600505E8B /* ViewController.swift in Sources */,
+				347D99B01D74CC2B0096FA3A /* Fader.swift in Sources */,
+				34A6F1BD1D74CE88003421D7 /* FaderNode.swift in Sources */,
 				341B271D1D66B2460025C292 /* ResponseTextView.swift in Sources */,
 				7539A4711CE7A57600505E8B /* AppDelegate.swift in Sources */,
 				3456EEB51D70CAAE00C6A611 /* Node.swift in Sources */,
