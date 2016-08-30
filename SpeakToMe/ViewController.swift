@@ -43,6 +43,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   var recordingStopped: Bool = true
   var audioStopped: Bool = true
   
+  var paused: Bool = false
   let delayIfNoAudio: Double = 2.0
   let delayBeforeNewScene: Double = 1.0
   
@@ -131,6 +132,8 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     // print(nodes)
     
     
+    
+
 
   }
   
@@ -212,7 +215,6 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     // view fully appears
     // print("stm: viewDidAppear()")
     
-  
     resetAndInitializeStoryView(firstTime: true)
     
     // speech stuff
@@ -711,14 +713,14 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     self.currentNodeId = node.id // advance currentNode forward
     self.stopListeningLoop()
 
-    self.recordingStatusLight.alpha = 0
+    
 
     UIView.animate(
       withDuration: 0.5,
       delay: 0.0,
       options: [.curveEaseInOut],
       animations: {
-        
+        self.recordingStatusLight.alpha = 0
         self.response1.frame.origin.y += self.r1Translate
         
       }, completion: nil)
@@ -757,13 +759,14 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   
   @IBAction func responseSelected(sender: AnyObject) {
     
+    self.stopListeningLoop()
     
     UIView.animate(
       withDuration: 0.5,
       delay: 0.0,
       options: [.curveEaseInOut],
       animations: {
-        
+        self.recordingStatusLight.alpha = 0
         self.response1.frame.origin.y += self.r1Translate
         
       }, completion: nil)
@@ -811,8 +814,6 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         if let responseNode = self.nodes[responseId] {
           // add response to story
           self.currentNodeId = responseId // advance currentNode forward
-          self.stopListeningLoop()
-
           self.processNode(node: responseNode)
         }
         
@@ -825,6 +826,30 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     self.stopListeningLoop()
     self.resetAndInitializeStoryView()
     // self.restartButton.isHidden = true
+  }
+  
+  @IBAction func pauseButtonTapped() {
+    
+    
+    if !self.paused {
+      print("pausing")
+      self.audioStopped = true
+      self.playerNode.stop()
+      self.musicNode.pause()
+      self.backgroundAudioNode.pause()
+      self.paused = true
+    } else {
+      print("resuming")
+      
+      if let node = self.nodes[self.currentNodeId] {
+        self.playAudio(node: node)
+      }
+      
+      self.musicNode.play()
+      self.backgroundAudioNode.play()
+      self.paused = false
+    }
+    
   }
 
   @IBAction func butanButtonTapped() {
