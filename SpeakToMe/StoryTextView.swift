@@ -37,7 +37,7 @@ class StoryTextView: UITextView {
     // self.layer.borderColor = UIColor(red:0.00, green:0.00, blue:0.00, alpha:0.1).cgColor
     // self.layer.borderWidth = 1.0
     
-    // IMAGE, return here
+    // IMAGE, return here and add image/size things properly in willMove()
     if speaker.lowercased() == "picture" {
       return
     }
@@ -90,7 +90,7 @@ class StoryTextView: UITextView {
           NSParagraphStyleAttributeName: narratorPs,
           NSFontAttributeName: UIFont(name: "Georgia-Italic", size: 14.0)!
         ], range: NSMakeRange(0, attrString.length))
-        self.textContainerInset = UIEdgeInsets(top: 10.0, left: 0, bottom: 10.0, right: 0)
+        self.textContainerInset = UIEdgeInsets(top: 10.0, left: 0, bottom: 30.0, right: 0)
         
       case "albus": // user
         addAuthorName(name: "you", attrString: attrString)
@@ -157,7 +157,7 @@ class StoryTextView: UITextView {
     self.alpha = 0
     
     if self.speaker!.lowercased() == "picture" {
-      print("now showing picture \(self.theText)")
+      // print("now showing picture \(self.theText)")
       let image = UIImage(named: "images/story/\(self.theText!)")
       let imageView = UIImageView(image: image)
       imageView.contentMode = .scaleAspectFit

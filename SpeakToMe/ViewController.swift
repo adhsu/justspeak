@@ -3,17 +3,21 @@ import Speech
 import AVFoundation
 
 public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
-  // MARK: Properties
+  
+  // speech rec properties
   private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
   private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
   private var recognitionTask: SFSpeechRecognitionTask?
+  
+  // audio engine properties
   private let audioEngine = AVAudioEngine()
-  private var player: AVAudioPlayer!
   private let playerNode = AVAudioPlayerNode()
   private let musicNode = AVAudioPlayerNode()
   private let backgroundAudioNode = AVAudioPlayerNode()
-
+  private var backgroundFaderNode: FaderNode?
+  
   private var inputNode: AVAudioInputNode?
+  private var mainMixer: AVAudioMixerNode?
   
   private var r1Translate : CGFloat = 0
   private var r2Translate : CGFloat = 0
@@ -31,18 +35,24 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   @IBOutlet var response3 : ResponseTextView!
   
   @IBOutlet weak var recordingStatusLight: UIView!
-
+  
+  let rootNodeId: Int = 1
+  var currentNodeId: Int = 1
+  
+  var nodes: [Int: Node] = [:] // dictionary of nodes, will construct in viewDidLoad
+  var recordingStopped: Bool = true
+  var audioStopped: Bool = true
+  
+  var paused: Bool = false
+  let delayIfNoAudio: Double = 2.0
+  let delayBeforeNewScene: Double = 1.0
+  
   let greenColor: UIColor = UIColor(red:11/255.0, green:116/255.0, blue:57/255.0, alpha:1.0)
   let lightGreenColor: UIColor = UIColor(red:30/255.0, green:173/255.0, blue:109/255.0, alpha:1.0)
   let redColor: UIColor = UIColor(red:147/255.0, green:40/255.0, blue:40/255.0, alpha:1.0)
   let grayColor: UIColor = UIColor(red:0.00, green:0.0, blue:0.0, alpha:0.25)
   let fadeGrayColor: UIColor = UIColor(red:0.00, green:0.0, blue:0.0, alpha:0.65)
-  
-  var currentNodeId: Int = 1
-  
-  var nodes: [Int: Node] = [:] // dictionary of nodes, will construct in viewDidLoad
-  var recordingStopped: Bool = true
-  
+
   
   // MARK: UIViewController
   
@@ -66,17 +76,18 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     do {
       self.inputNode = audioEngine.inputNode
       
-      let mainMixer = audioEngine.mainMixerNode
+      self.mainMixer = audioEngine.mainMixerNode
       
       audioEngine.attach(self.playerNode)
-      audioEngine.connect(self.playerNode, to: mainMixer, format: mainMixer.outputFormat(forBus: 0))
+      audioEngine.connect(self.playerNode, to: self.mainMixer!, format: mainMixer?.outputFormat(forBus: 0))
       
       audioEngine.attach(self.musicNode)
-      audioEngine.connect(self.musicNode, to: mainMixer, format: mainMixer.outputFormat(forBus: 0))
+      audioEngine.connect(self.musicNode, to: self.mainMixer!, format: mainMixer?.outputFormat(forBus: 0))
       
       audioEngine.attach(self.backgroundAudioNode)
-      audioEngine.connect(self.backgroundAudioNode, to: mainMixer, format: mainMixer.outputFormat(forBus: 0))
-      
+      audioEngine.connect(self.backgroundAudioNode, to: mainMixer!, format: mainMixer?.outputFormat(forBus: 0))
+      backgroundAudioNode.volume = 0
+      backgroundFaderNode = FaderNode(playerNode: backgroundAudioNode)
       
       // start audioEngine
       print("start audioEngine")
@@ -121,11 +132,13 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     // print(nodes)
     
     
+    
+
 
   }
   
   func goNext() {
-    
+    print("gonext")
     // audio plays on different thread, need to run this code on main thread
     DispatchQueue.main.async {
       
@@ -145,10 +158,10 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   
   func playAudio(node: Node) {
     
-    let filename = "audio/\(node.id).mp3"
+    self.audioStopped = false
     
     // play audio
-    if let audioPath = Bundle.main.path(forResource: filename, ofType: nil) {
+    if let audioPath = Bundle.main.path(forResource: "audio/\(node.id).mp3", ofType: nil) {
       
       // print("playing audio \(node.id).mp3")
       let url = NSURL(fileURLWithPath: audioPath)
@@ -157,7 +170,11 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         let audioFile = try AVAudioFile(forReading: url as URL)
         
         playerNode.scheduleFile(audioFile, at: nil, completionHandler: {
-          self.goNext()
+          
+          if !self.audioStopped {
+            print("PLAYER NODE COMPLETION HANDLER HAHAHAHA")
+            self.goNext()
+          }
           
         })
 
@@ -169,7 +186,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
       
     } else { // audio file not found
       // print("cannot find audio file for node \(node.id)")
-      delay(seconds: 1.5) {
+      delay(seconds: self.delayIfNoAudio) {
         self.goNext()
       }
     }
@@ -198,7 +215,6 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     // view fully appears
     // print("stm: viewDidAppear()")
     
-  
     resetAndInitializeStoryView(firstTime: true)
     
     // speech stuff
@@ -397,108 +413,157 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     
 
   }
+  
+  func playMusic(_ filename: String) {
+    print("playing music \(filename)")
+    if let path = Bundle.main.path(forResource: "music/\(filename)", ofType: nil) {
+      let url = NSURL(fileURLWithPath: path)
+      do {
+        let audioFile = try AVAudioFile(forReading: url as URL)
+        musicNode.scheduleFile(audioFile, at: nil, completionHandler: nil)
+        musicNode.play()
+        
+      } catch let err as NSError {
+        print(err)
+      }
+    }
+  }
 
+  func playBackgroundLoop(_ filename: String) {
+    print("playing background loop \(filename)")
+    if let path = Bundle.main.path(forResource: "music/\(filename)", ofType: nil) {
+      let url = NSURL(fileURLWithPath: path)
+      do {
+        let audioFile = try AVAudioFile(forReading: url as URL)
+        let audioFormat = audioFile.processingFormat
+        let audioFrameCount = UInt32(audioFile.length)
+        let audioFileBuffer = AVAudioPCMBuffer(pcmFormat: audioFormat, frameCapacity: audioFrameCount)
+        try audioFile.read(into: audioFileBuffer)
+        
+        backgroundAudioNode.scheduleBuffer(audioFileBuffer, at: nil, options: .loops, completionHandler: nil)
+        self.backgroundAudioNode.play()
+        self.backgroundFaderNode?.fadeIn()
+        
+        
+      } catch let err as NSError {
+        print(err)
+      }
+    }
+  }
+  
+  func stopBackgroundLoop() {
+    self.backgroundFaderNode?.fadeOut() { finished in
+      self.backgroundAudioNode.stop()
+    }
+  }
+
+  func processNode(node: Node) {
+    print("stm: processNode, node id \(node.id)")
+
+    switch node.speaker.lowercased() {
+
+      case "music":
+        self.playMusic(node.text)      
+        self.goNext()
+        return
+
+      case "startmusicloop":
+        self.playBackgroundLoop("scene1_background.mp3")
+        self.goNext()
+        return
+
+      case "stopmusicloop":
+        self.stopBackgroundLoop()
+        self.goNext()
+        return
+
+      case "h1":
+
+        if self.currentNodeId != self.rootNodeId {
+          // if we're at a new scene, scroll all the way up
+          UIView.animate(
+            withDuration: 1.0,
+            animations: {
+              for subview in self.storyScrollView.subviews {
+                subview.alpha = 0.0
+              }
+            },
+            completion: {_ in
+              // scroll to new screen
+              self.setScrollBottomInset(amount: self.storyScrollView.frame.size.height, animated: false)
+              // fade all storytextviews back in
+              for subview in self.storyScrollView.subviews {
+                subview.alpha = 1.0
+              }
+
+              self.delay(seconds: self.delayBeforeNewScene) {
+                self.addStoryView(node: node)
+              }
+              
+            })
+
+          // sleep(5)
+        } else {
+          self.addStoryView(node: node)
+        }
+
+      default:
+        self.addStoryView(node: node)
+
+    }
+  }
+  
+  func handleDoubleTap() {
+    print("double tapped")
+    self.playerNode.stop()
+  }
+  
   // view functions
   func addStoryView(node: Node) {
     print("stm: addStoryView, node id \(node.id)")
     
-    
-    if node.speaker.lowercased() == "music" {
-      
-      // play music for scene
-      
-      if let path = Bundle.main.path(forResource: "music/\(node.text)", ofType: nil) {
-        let url = NSURL(fileURLWithPath: path)
-        do {
-          let audioFile = try AVAudioFile(forReading: url as URL)
-          musicNode.scheduleFile(audioFile, at: nil, completionHandler: nil)
-          musicNode.play()
-          
-        } catch let err as NSError {
-          print(err)
-        }
-      }
- 
-      // play background audio for scene
-      if let path = Bundle.main.path(forResource: "music/scene1_background.mp3", ofType: nil) {
-        let url = NSURL(fileURLWithPath: path)
-        do {
-          let audioFile = try AVAudioFile(forReading: url as URL)
-          let audioFormat = audioFile.processingFormat
-          let audioFrameCount = UInt32(audioFile.length)
-          let audioFileBuffer = AVAudioPCMBuffer(pcmFormat: audioFormat, frameCapacity: audioFrameCount)
-          try audioFile.read(into: audioFileBuffer)
-          
-          
-          backgroundAudioNode.scheduleBuffer(audioFileBuffer, at: nil, options: .loops, completionHandler: nil)
-          
-          backgroundAudioNode.play()
-          
-        } catch let err as NSError {
-          print(err)
-        }
-      }
-      
-      
-      
-      
-      self.goNext()
-      return
-    }
-    
     let textView = StoryTextView(text: node.text, speaker: node.speaker, id: node.id)
     
-    storyScrollView.addSubview(textView)
-    print("added subview, height is \(textView.frame.size.height)")
-    
-    // set proper storyScrollView size
-    storyScrollView.setContentViewSize()
+    storyScrollView.addSubview(textView) 
+    storyScrollView.setContentViewSize() // set proper storyScrollView size
 
+    // check if scrollview has content inset
     let contentInsetExists = (self.storyScrollView.contentInset.bottom > self.storyScrollViewDefaultInsets.bottom)
-    
-    print(self.storyScrollView.contentInset.bottom, self.storyScrollViewDefaultInsets.bottom)
-    
+    // print(self.storyScrollView.contentInset.bottom, self.storyScrollViewDefaultInsets.bottom)
 
     if contentInsetExists {
-
-      let newInset = self.storyScrollView.contentInset.bottom - textView.frame.size.height 
-
+      // if it does, reduce the inset by height of new storytextview
+      let newInset = self.storyScrollView.contentInset.bottom - textView.frame.size.height
       if newInset < self.storyScrollViewDefaultInsets.bottom {
         self.setScrollBottomInset(amount: self.storyScrollViewDefaultInsets.bottom, animated: true)
-      
       } else {
         self.setScrollBottomInset(amount: newInset, animated: false)
       }
-    
-
     } else {
-
-      // scroll to bottom
+      // otherwise, scroll to bottom
       self.scrollViewToBottom(animated: true)
-
     }
-
-    self.animateInStoryView(textView, node)
-
     
-  }
-  
-  func animateInStoryView(_ view: StoryTextView, _ node: Node) {
-    
-    // print("animating in node id \(node.id)")
+    // add tap gestures
+    let doubleTap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.handleDoubleTap))
+    doubleTap.numberOfTapsRequired = 2
+    textView.addGestureRecognizer(doubleTap)
+
+    // now play audio and fade in the storytextview
     self.playAudio(node: node)
-    
-    // animate in
+
     UIView.animate(
       withDuration: 0.5,
       delay: 0.0,
       options: [.curveEaseInOut],
       animations: {
-        view.alpha = 1.0
+        textView.alpha = 1.0
       },
       completion: nil)
+
   }
   
+
   func createAttrString(text: String) ->  NSMutableAttributedString {
     
     let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
@@ -583,7 +648,10 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   func setResponses(_ responses: [Int]) {
     
     // start listening immediately, then animate responses in
-    try! self.startListeningLoop()
+    if self.recordingStopped {
+      try! self.startListeningLoop()
+    }
+    
 
 
     let response1Node = nodes[responses[0]]!
@@ -617,8 +685,6 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     response3.frame.origin.y += r3Translate
     
     // move storyScrollView content up with contentInset
-    
-    // print("responseStack height: \(self.responseStack.frame.size.height)")
     self.setScrollBottomInset(amount: self.responseStack.frame.size.height + self.storyScrollViewDefaultInsets.bottom, animated: true)
 
     // animate responses back in
@@ -658,7 +724,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     // print("stm: currently on node \(self.currentNodeId), going to next!")
     if let nextNode = self.nodes[node.next!] {
       
-      self.addStoryView(node: nextNode) // add storyView
+      self.processNode(node: nextNode)
       self.currentNodeId = node.next! // set current node id
       // print("stm: current node id is \(self.currentNodeId)")
     }
@@ -671,14 +737,14 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     self.currentNodeId = node.id // advance currentNode forward
     self.stopListeningLoop()
 
-    self.recordingStatusLight.alpha = 0
+    
 
     UIView.animate(
       withDuration: 0.5,
       delay: 0.0,
       options: [.curveEaseInOut],
       animations: {
-        
+        self.recordingStatusLight.alpha = 0
         self.response1.frame.origin.y += self.r1Translate
         
       }, completion: nil)
@@ -709,7 +775,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         self.response2.frame.origin.y -= self.r2Translate
         self.response3.frame.origin.y -= self.r3Translate
         
-        self.addStoryView(node: node)
+        self.processNode(node: node)
         
     })
     
@@ -717,13 +783,14 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   
   @IBAction func responseSelected(sender: AnyObject) {
     
+    self.stopListeningLoop()
     
     UIView.animate(
       withDuration: 0.5,
       delay: 0.0,
       options: [.curveEaseInOut],
       animations: {
-        
+        self.recordingStatusLight.alpha = 0
         self.response1.frame.origin.y += self.r1Translate
         
       }, completion: nil)
@@ -771,9 +838,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         if let responseNode = self.nodes[responseId] {
           // add response to story
           self.currentNodeId = responseId // advance currentNode forward
-          self.stopListeningLoop()
-
-          self.addStoryView(node: responseNode)
+          self.processNode(node: responseNode)
         }
         
       })
@@ -786,12 +851,34 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     self.resetAndInitializeStoryView()
     // self.restartButton.isHidden = true
   }
+  
+  @IBAction func pauseButtonTapped() {
+    
+    
+    if !self.paused {
+      print("pausing")
+      self.audioStopped = true
+      self.playerNode.stop()
+      self.musicNode.pause()
+      self.backgroundAudioNode.pause()
+      self.paused = true
+    } else {
+      print("resuming")
+      
+      if let node = self.nodes[self.currentNodeId] {
+        self.playAudio(node: node)
+      }
+      
+      self.musicNode.play()
+      self.backgroundAudioNode.play()
+      self.paused = false
+    }
+    
+  }
 
   @IBAction func butanButtonTapped() {
-    print("butan tapped")
-    
-    setScrollBottomInset(amount: 200.0)
-
+    print("skip node")
+    self.playerNode.stop()
   }
   
   func setScrollBottomInset(amount: CGFloat, animated: Bool = true) {
@@ -828,9 +915,13 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   func resetAndInitializeStoryView(firstTime: Bool = false) {
     print("resetAndInitializeStoryView")
     
-    // stop audio
+    // stop audio, music, background loops
+    self.audioStopped = true
     self.playerNode.stop()
-    
+    self.musicNode.stop()
+    self.stopBackgroundLoop()
+
+
     // clear storyScrollView
     if !firstTime {
       for subview in storyScrollView.subviews {
@@ -847,11 +938,11 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     recordingStatusLight.backgroundColor = self.grayColor
     
     // reset currentNodeId
-    self.currentNodeId = 1
+    self.currentNodeId = self.rootNodeId
     
     // add first node to view
     if let node = self.nodes[self.currentNodeId] {
-      addStoryView(node: node)
+      processNode(node: node)
     }
   }
 
