@@ -13,13 +13,15 @@ class StoryTextView: UITextView {
   var id: Int?
   var speaker: String?
   var theText: String?
+  var markupIndices: [Int]?
   
-  convenience init(text: String, speaker: String, id: Int) {
+  convenience init(text: String, speaker: String, id: Int, markupIndices: [Int] = []) {
     self.init(frame: CGRect.zero, textContainer: nil)
     
     self.id = id
     self.speaker = speaker
     self.theText = text
+    self.markupIndices = markupIndices
     
     // standard attributes
     self.backgroundColor = UIColor.clear
@@ -93,13 +95,16 @@ class StoryTextView: UITextView {
         self.textContainerInset = UIEdgeInsets(top: 30.0, left: 0, bottom: 30.0, right: 0)
         
       case "albus": // user
+        
         addAuthorName(name: "you", attrString: attrString)
         attrString.addAttributes([
-          NSForegroundColorAttributeName: UIColor(red:30/255.0, green:173/255.0, blue:109/255.0, alpha:1.0),
+          NSForegroundColorAttributeName: UIColor(red:30/255.0, green:173/255.0, blue:109/255.0, alpha:1.0), // green
           NSParagraphStyleAttributeName: ps
           ], range: NSMakeRange(0, attrString.length))
+        markupAttrString(attrString: attrString, indices: self.markupIndices!)
         self.textContainerInset = UIEdgeInsets(top: 10.0, left: 0, bottom: 10.0, right: 0)
 
+      
       default: // case "ginny", "harry", "james", "rose", "scorpius", "lily", "sorting hat":
         addAuthorName(name: speaker, attrString: attrString)
         attrString.addAttributes([
@@ -130,7 +135,7 @@ class StoryTextView: UITextView {
     // let spaceBetween: CGFloat = 20.0
     
     if newSuperview == nil {
-      print("superview is nil, not doing anything in willMove")
+      // print("superview is nil, not doing anything in willMove")
       return
     }
     
@@ -138,12 +143,12 @@ class StoryTextView: UITextView {
     
     // set y position
     let storyTextViewList = newSuperview?.subviews.filter({ $0 is StoryTextView }) // filter for StoryTextViews
-    // print("stm: storytextviewlist count \(storyTextViewList.count)")
+    // print("storytextviewlist count \(storyTextViewList.count)")
     if storyTextViewList?.count > 0 {
       if let prevStoryView = storyTextViewList?.last as? StoryTextView { // get last one in list
-        // print("stm: last storytextview is \(prevStoryView), frame y \(prevStoryView.frame.origin.y), height \(prevStoryView.frame.size.height)")
+        // print("last storytextview is \(prevStoryView), frame y \(prevStoryView.frame.origin.y), height \(prevStoryView.frame.size.height)")
         let newY = prevStoryView.frame.origin.y + prevStoryView.frame.size.height
-        // print("stm: setting y to \(newY)")
+        // print("setting y to \(newY)")
         self.frame.origin.y = newY
       }
     }
@@ -158,7 +163,7 @@ class StoryTextView: UITextView {
     
     if self.speaker!.lowercased() == "picture" {
       // print("now showing picture \(self.theText)")
-      let image = UIImage(named: "images/story/\(self.theText!)")
+      let image = UIImage(named: self.theText!)
       let imageView = UIImageView(image: image)
       imageView.contentMode = .scaleAspectFit
       self.addSubview(imageView)
@@ -181,7 +186,7 @@ class StoryTextView: UITextView {
     
     // if h2, add the broomstick after h2 frame has been sized
     if self.speaker!.lowercased() == "h2" {
-      let image = UIImage(named: "images/broomstick.png")
+      let image = UIImage(named: "broomstick.png")
       let imageView = UIImageView(image: image)
       imageView.contentMode = .scaleAspectFit
       self.addSubview(imageView)
@@ -201,6 +206,27 @@ class StoryTextView: UITextView {
       ])
     name.append(attrString)
     attrString.replaceCharacters(in: NSMakeRange(0, attrString.length), with: name)
+    
+  }
+  
+  func markupAttrString(attrString: NSMutableAttributedString, indices: [Int]) {
+    // print("marking up attr string with indices \(indices)")
+    print(attrString.string)
+    
+    
+    for index in indices {
+      // create range for word index
+      let word = attrString.string.components(separatedBy: " ")[index+1]
+      // print(word)
+      let str = NSString(string: attrString.string) // convert to NSString so we can get NSRange
+      // print(str)
+      let range = str.range(of: word)
+              
+      attrString.addAttributes([
+        NSForegroundColorAttributeName: UIColor(red:234/255.0, green:134/255.0, blue:10/255.0, alpha:1.0), // orange
+        ], range: range)
+      
+    }
     
   }
   

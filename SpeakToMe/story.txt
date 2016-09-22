@@ -1,13 +1,13 @@
-1: (H1) ACT ONE, SCENE ONE -> 3
-2: (music) scene_1_music.mp3 -> 3
+1: (music) scene_1_music.mp3 -> 2
+2: (H1) ACT ONE, SCENE ONE -> 4
 3: (startmusicloop) scene_1_background.mp3 -> 4
-4: (H2) KING'S CROSS STATION -> 5
+4: (H2) KING'S CROSS STATION
 5: (picture) potter.jpg -> 12
-10: (NARRATOR) You are in a busy and crowded train station. It is full of people trying to go somewhere. Amongst the busyness, there is a family dressed in slightly peculiar robes. There are two sons, JAMES POTTER and ALBUS POTTER, who are pushing two overflowing carts. Their mother, GINNY, follows after. A thirty-seven-year-old man, HARRY, has his daughter, LILY, on his shoulders. -> 12
+10: (NARRATOR) You are in a busy and crowded train station. There are two sons, JAMES POTTER and ALBUS POTTER, who are pushing two overflowing carts. Their mother, GINNY, follows after. A thirty-seven-year-old man, HARRY, has his daughter, LILY, on his shoulders. -> 12
 12: (Ginny) We'll write to you every day ALBUS! [13,14,15]
-13: (ALBUS) No. Not every day. James says most people only get letters from home about once a month. -> 17
-14: (ALBUS) You better! -> 17
-15: (ALBUS) Mom, I'm 12 years old now. I'm no longer a little kid. -> 17
+13: (ALBUS) No. Not every day. James says most people only get letters from home about once a month. -> 16
+14: (ALBUS) You better! -> 16
+15: (ALBUS) Mom, I'm 12 years old now. I'm no longer a little kid. -> 16
 16: (HARRY) We wrote to your brother three times a week last year. Don't believe everything your brother says about Hogwarts, Albus. -> 17
 17: (JAMES) Can we go now please? [18, 19, 20]
 18: (ALBUS) Yes, I can't wait to get on that train! -> 22
@@ -15,33 +15,31 @@
 20: (ALBUS) I don't know...maybe I should just wait until next year. -> 21
 21: (NARRATOR) HARRY pretends he didn't hear you... -> 22
 22: (HARRY) Ok, let's do this! Remember don't stop and don't be scared you'll crash into it, that's very important. Best do it at a run if you're nervous. -> 23
-23: (ALBUS) I'm ready. -> 24
+23: (ALBUS) I'm ready.
+
 
 24: (music) scene_2_music.mp3 -> 25
 25: (picture) platform.jpg -> 26
-
-26: (NARRATOR) The family interlocks their hands and runs hard into the barrier together. -> 27
+26: (NARRATOR) The family interlocks their hands and runs hard into the barrier together.
 
 27: (H1) ACT ONE, SCENE TWO -> 28
 28: (H2) PLATFORM NINE AND THREE-QUARTERS -> 30
-
 30: (startmusicloop) scene_2_background.mp3 -> 31
-
-
-31: (picture) express.jpg -> 32
-32: (NARRATOR) Instead of people in sharp suits going about their day, the platform is now full of wizards and witches in robes mostly trying to work out how to say good-bye to their beloved children. [34,35,36]
-34: (ALBUS) Wow, this is it. Platform nine and three quarters. -> 37
-35: (ALBUS) Mom, I am really thinking we might want to wait a year... -> 37
-36: (ALBUS) I see Uncle Ron! -> 37
-37: (LILY) Where are they? Are they here? Maybe they didn't come? -> 39
-39: (NARRATOR) HARRY points out RON, HERMIONE, and their daughter, ROSE. LILY runs hard up to them. -> 41
+31: (picture) express.jpg -> 34
+32: (NARRATOR) Instead of people in sharp suits going about their day, the platform is now full of wizards and witches in robes mostly trying to work out how to say good-bye to their beloved children. 
+34: (ALBUS) Wow, this is it. Platform nine and three quarters. -> 39
+35: (ALBUS) Mom, I am really thinking we might want to wait a year... -> 39
+36: (ALBUS) I see Uncle Ron! -> 39
+37: (LILY) Where are they? Are they here? Maybe they didn't come?
+39: (NARRATOR) HARRY points out RON, HERMIONE, and their daughter, ROSE. LILY runs hard up to them. -> 43
 41: (LILY) Uncle Ron. Uncle Ron!!! -> 62
 62: (picture) reunion.jpg -> 42
-
 42: (NARRATOR) RON turns towards them as LILY goes barreling up to him. He picks her up into his arms. -> 43
 43: (RON) If it isn't my favorite Potter. -> 45
-45: (NARRATOR) You start to get anxious when you think about the sorting hat's decision tonight. You pull on HARRY's robes. HARRY looks down. -> 47
+45: (NARRATOR) You start to get anxious when you think about the sorting hat's decision tonight. You pull on HARRY's robes. HARRY looks down. [47,1000,1001]
 47: (ALBUS) Do you think I...What if I am put in Slytherin? -> 48
+1000: (ALBUS) I really hope I don't get put in a bad house like Slytherin. -> 48
+1001: (ALBUS) Dad is there anyway you can talk to the head mistress and ask her to make sure I'm not in Slytherin? -> 48
 48: (HARRY) And what would be wrong with that? [49, 50, 51]
 49: (ALBUS) Slytherin is the House of the snake, of Dark Magic . . . It's not a House of brave wizards. -> 52
 50: (ALBUS) But Potters are supposed to be in Gryffindor. -> 52
@@ -50,7 +48,8 @@
 53: (ALBUS) I know the sorting hat will take into account how I feel. -> 56
 54: (ALBUS) I guess you're right Dad. -> 56
 55: (ALBUS) I don't care about Snape! I just want to be a Gryffindor. -> 56
-56: (HARRY) Remember, the sorting hat is there for a reason. You are going to love Hogwarts so much. -> 57
+56: (HARRY) Remember, the sorting hat is there for a reason. You are going to love Hogwarts so much.
+
 57: (HARRY) Albus, if you don't want this train to leave without you, you should probably leap on! -> 58
 58: (HERMIONE) Rose. Remember to send Neville our love. -> 59
 59: (ROSE) Mom, I can't give a professor love! -> 60
@@ -61,16 +60,15 @@
 
 65: (stopmusicloop) scene_2_background.mp3 -> 68
 68: (startmusicloop) scene_3_background.mp3 -> 69
-
 69: (picture) choochoo.jpg -> 63
+
 63: (H1) ACT ONE, SCENE THREE -> 64
 64: (H2) THE HOGWARTS EXPRESS -> 67
-
 67: (NARRATOR) You walk along the carriage of the train with Rose. The TROLLEY WITCH approaches, pushing her trolley. -> 71
 71: (TROLLEY WITCH) Anything from the trolley, dears? Pumpkin Pasty? Chocolate Frog? Cauldron Cake? -> 72
 72: (ROSE) {spotting ALBUS's loving look at the Chocolate Frogs} Albus. We need to concentrate. [73, 75, 77]
 73: (ALBUS) Concentrate on what? -> 74
-74: (ROSE) On who we choose to be friends with.  -> 75
+74: (ROSE) On who we choose to be friends with.  -> 79
 75: (ALBUS) Agreed! What candy should we eat first? -> 76
 76: (ROSE) Not that! We need to choose who to be friends with.  -> 79
 77: (ALBUS) Yeah, I'm not exactly feeling sweets right now either. -> 78
@@ -82,12 +80,13 @@
 83: (ROSE) Come on. I'm a Granger-Weasley, you're a Potter — everyone will want to be friends with us, we've got the pick of anyone we want. [84,85,87]
 84: (ALBUS) So how do we decide which compartment to go in . . . -> 86
 85: (ALBUS) How do you suggest we decide who to be friends with then. -> 86
-86: (ROSE) We rate them all and then we make a decision. -> 89
-87: (ALBUS) Let's just find a compartment and sit in it like everyone else. -> 89
+86: (ROSE) We rate them all and then we make a decision. [87,2000,2001]
+87: (ALBUS) Let's just go in this compartment and sit in it like everyone else. -> 91
+2000: (ALBUS) Ok how about we start with this cabin? -> 91
+2001: (ALBUS) Lets start on this side of the train and head down towards the back. -> 91
+89: (picture) scorpius.jpg [93,94,95]
 
-89: (picture) scorpius.jpg -> 91
-
-91: (NARRATOR) The cabin opens with a soft sound, revealing a single blonde headed boy sitting alone. [93,94,95]
+91: (NARRATOR) The cabin opens with a soft sound, revealing a single blonde headed boy sitting alone. -> 89
 93: (ALBUS) Hi. Is this compartment open? -> 96
 94: (ALBUS) Hey - what's your name? -> 97
 95: (ALBUS) Hi, I'm the son of Harry Potter. -> 98
@@ -102,7 +101,10 @@
 104: (SCORPIUS) And who is your friend? -> 105
 105: (ROSE) My name's Rose. -> 106
 106: (ROSE) Albus, actually we should get going pretty soon to the next cabin. -> 107
-107: (SCORPIUS) But wait - I haven't even offered you some of my Fizzing Whizbees yet. Would you like one? -> 108
+107: (SCORPIUS) But wait - I haven't even offered you some of my Fizzing Whizbees yet. Would you like one?
+
+
+
 108: (ROSE) I've just had breakfast, thanks. -> 109
 109: (SCORPIUS) I've also got some Shock-o-Choc, Pepper Imps, and some Jelly Slugs. Mum's idea — she says, "Sweets, they always help you make friends." {He realizes that singing was a mistake.} Stupid idea, probably. [110, 111, 112]
 110: (ALBUS) That honestly all sounds really terrible. Have any banana bread? -> 116
@@ -119,7 +121,7 @@
 125: (ROSE) {Rose hits you out of sight of SCORPIUS} We really must be going. [126,127,128]
 126: (ALBUS) Rose, will you please stop hitting me? -> 129
 127: (ALBUS) Oh...yeah I guess you are right Rose. Thanks anyway Scorpius. We must be off. -> 168
-128: (ALBUS) Rose, I'm serious. You've probably never had a sweet in your life but they are really delicious. -> 182
+128: (ALBUS) Rose, I'm serious. You've probably never had a sweet in your life but they are really delicious. -> 133
 129: (ROSE) I'm not hitting you. [130,131,132]
 130: (ALBUS) What? Oh I must have imagined it then. Hey Scorpius, Rose and I actually have to leave. -> 168
 131: (ALBUS) You *are* hitting me. And it hurts. -> 133
@@ -179,40 +181,3 @@
 190: (ALBUS) Rose do you want anything? -> 193
 191: (ALBUS) Yeah one of everything please! -> 193
 193: (NARRATOR) You start talking with Scorpius and realize he is actually a really nice kid. In fact, he is a bit of a geek. Rose stays for most of the trip but eventually moves on. -> 195
-195: (TITLE) ACT ONE SCENE FOUR -- Hogwarts Great Hall -> 197
-197: (NARRATOR) You are now in the Great Hall of Hogwarts for the first time in your life. You've heard many stories of its grandness but are blown away by wonder all the same. -> 199
-199: (NARRATOR) It is time for you to be sorted into one of the four Houses of Hogwarts. You are filled with a mix of dread and excitement. -> 201
-201: (HEADMASTER) Will the next student, Albus Potter, please come to the front of the stage to be sorted. -> 203
-203: (NARRATOR) There is a not so hushed murmur as the famous last name is recognized universally throughout the hall as you walk up to the sorting hat. -> 205
-205: (SORTING HAT) Ahh, another Potter. Always an...interesting challenge. [207,208,209]
-207: (ALBUS) Please just put me in Griffindor. -> 210
-208: (ALBUS) Make it quick please. -> 211
-209: (ALBUS) What is challenging about my family? We've always gone to Griffindor. -> 212
-210: (SORTING HAT) Are you really that nervous I might put you in Slytherin? [213,214,215]
-211: (SORTING HAT) Ah what's the rush? Are you nervous I might put you in Slytherin? [213,214,215]
-212: (SORTING HAT) That's true, but I don't think you appreciate how close some of those calls have been. [213,214,215]
-213: (ALBUS) I'm the farthest thing from a Slytherin! -> 216
-214: (ALBUS) I have nothing against any of the houses. -> 217
-215: (ALBUS) Sort me where you will. You know best. -> 218
-216: (SORTING HAT) That is for me to determine, not you young one. -> 219
-217: (SORTING HAT) Don't lie to me when I am inside of your head like this! I can see everything. -> 219
-218: (SORTING HAT) Ahh, a suck up. That's very Ravenclaw of you. -> 219
-219: (SORTING HAT) But tell me, why do you really want to be in Griffindor in the first place? [220,221,222]
-220: (ALBUS) I'm a Potter. It's where I belong. -> 223
-221: (ALBUS) Because I want to be brave and always do the right thing! -> 224
-222: (ALBUS) It's the only house I have ever known. -> 225
-223: (SORTING HAT) Your last name has nothing to do with this. [226, 227, 228]
-224: (SORTING HAT) Being sorted into a house won't make you into anything. That is up to you regardless of my decision tonight. [226, 227, 228]
-225: (SORTING HAT) Ahhh, would you like to know another one? [231,232,233]
-226: (ALBUS) Yeah I guess you're right. Sort me as you please. -> 229
-227: (ALBUS) If I am in Griffindor, I will always remember you favorably. -> 229
-228: (ALBUS) I give up in trying to convince you of anything. -> 230
-229: (SORTING HAT) No one commands me but only one house thinks they can. SLYTHERIN IT IS. -> 238
-230: (SORTING HAT) Now you finally get it. Ok, let's see. I will admit this is a confusing one. Ahh, yes. SLYTHERIN!! -> 238
-231: (ALBUS) Honestly not really. -> 234
-232: (ALBUS) I have always been curious about Slytherin. -> 235
-233: (ALBUS) Sure, but obviously I am not curious about Hufflepuff. -> 236
-234: (SORTING HAT) Ok...I have come to my decision. I think you will come to appreciate it in time-- SLYTHERIN! -> 238
-235: (SORTING HAT) Veeeery Interesting. As you wish, SLYTHERIN it is! -> 238
-236: (SORTING HAT) Haha! I see you have a sense of humor that was never present in your father. And for that, I decide SLYTHERIN!  -> 238
-238: (NARRATOR) A deafening silence immediately sweeps across the Hall instead of the usual applause. Slowly, some of the Slytherins process the news and slowly start to clap and gesture for you to come join them.

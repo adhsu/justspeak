@@ -2,7 +2,10 @@ import UIKit
 import Speech
 import AVFoundation
 
+
 public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScrollViewDelegate {
+  
+  let story = Story.sharedInstance
   
   // speech rec properties
   private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
@@ -15,9 +18,9 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
   private let musicNode = AVAudioPlayerNode()
   private let backgroundAudioNode = AVAudioPlayerNode()
   private var backgroundFaderNode: FaderNode?
-  
   private var inputNode: AVAudioInputNode?
   private var mainMixer: AVAudioMixerNode?
+  var audioCompletionQueue: [UInt64: Completion] = [:]
   
   private var r1Translate : CGFloat = 0
   private var r2Translate : CGFloat = 0
@@ -26,7 +29,6 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
   
   @IBOutlet var butanButton : UIButton!
   @IBOutlet var restartButton : UIButton!
-
   @IBOutlet var pauseButton : UIButton!
   @IBOutlet var playButton : UIButton!
 
@@ -39,13 +41,8 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
   @IBOutlet var response3 : ResponseTextView!
   
   @IBOutlet weak var recordingStatusLight: UIView!
-  
-  let rootNodeId: Int = 1
-  var currentNodeId: Int = 1
-  
-  var nodes: [Int: Node] = [:] // dictionary of nodes, will construct in viewDidLoad
+    
   var recordingStopped: Bool = true
-  var audioStopped: Bool = true
   var showingResponses: Bool = false
   var currentScrollOffset: CGFloat = 0
   var originalResponseStackY: CGFloat = 0
@@ -53,7 +50,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
   
   var paused: Bool = false
   let delayIfNoAudio: Double = 0.4
-  let delayTitle: Double = 1.5
+  let delayTitle: Double = 1.0
   let delayBeforeNewScene: Double = 1.0
   
   let greenColor: UIColor = UIColor(red:11/255.0, green:116/255.0, blue:57/255.0, alpha:1.0)
@@ -62,12 +59,13 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
   let grayColor: UIColor = UIColor(red:0.00, green:0.0, blue:0.0, alpha:0.25)
   let fadeGrayColor: UIColor = UIColor(red:0.00, green:0.0, blue:0.0, alpha:0.65)
 
+  var markupIndices: [Int] = []
   
   // MARK: UIViewController
   
   override public func viewDidLoad() {
     // called once when controller loads view into memory, do things you have to do only once
-    print("stm: viewDidLoad()")
+    print("viewDidLoad(), current scene is \(self.story.currentSceneIndex+1)")
     super.viewDidLoad()
     
     // set up audioSession
@@ -88,7 +86,18 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
       self.mainMixer = audioEngine.mainMixerNode
       
       audioEngine.attach(self.playerNode)
-      audioEngine.connect(self.playerNode, to: self.mainMixer!, format: mainMixer?.outputFormat(forBus: 0))
+
+      if let path = Bundle.main.path(forResource: "10.mp3", ofType: nil) {
+        let url = NSURL(fileURLWithPath: path)
+        do {
+          let audioFile = try AVAudioFile(forReading: url as URL)
+          let audioFormat = audioFile.processingFormat
+          audioEngine.connect(self.playerNode, to: self.mainMixer!, format: audioFormat)
+
+        } catch let err as NSError {
+          print(err)
+        }
+      }
       
       audioEngine.attach(self.musicNode)
       audioEngine.connect(self.musicNode, to: self.mainMixer!, format: mainMixer?.outputFormat(forBus: 0))
@@ -126,124 +135,20 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
     // storyScrollView.backgroundColor = UIColor(red:0.00, green:0.00, blue:0.00, alpha:0.1)
     
     
-    // read story.txt from file
-    var dataArr: [String] = []
-    do {
-      if let filePath = Bundle.main.path(forResource: "story", ofType: "txt") {
-        let data = try String(contentsOfFile: filePath, encoding: String.Encoding.utf8)
-        dataArr = data.components(separatedBy: NSCharacterSet.newlines).filter { !($0.isEmpty) } // separate by newline and filter out empty strings
-      }
-    } catch let err as NSError {
-      print(err)
-    }
-    // construct self.nodes dictionary
-    constructNodesDict(dataArr)
-    // print(nodes)
     
-  }
-  
-  
-  public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-    // print("scrolled, offset is \(scrollView.contentOffset)")
-    
-    if self.showingResponses {
-      // print("self.currentScrollOffset \(self.currentScrollOffset)")
-      // print(scrollView.contentOffset.y - self.currentScrollOffset)
-      let offset = scrollView.contentOffset.y - self.currentScrollOffset
-      
-      if offset < 0 {
-        print("offset is \(offset)")
-        print("responsestack y is \(self.responseStack.frame.origin.y)")
-        
-        self.responseStack.frame.origin.y = self.originalResponseStackY - offset
-        self.recordingStatusLight.frame.origin.y = self.originalResponseStackY - (16+12) - offset // light is 16px above responseStack and 12px high
-        // self.view.layoutIfNeeded()
-      } else {
-        self.responseStack.frame.origin.y = self.originalResponseStackY
-        self.recordingStatusLight.frame.origin.y = self.originalResponseStackY - (16+12) // light is 16px above responseStack and 12px high
-
-      }
-      
-    }
-    
-  }
-  
-  
-  func goNext() {
-    print("gonext")
-    // audio plays on different thread, need to run this code on main thread
-    DispatchQueue.main.async {
-      
-      if let node = self.nodes[self.currentNodeId] {
-        
-        if node.next != nil { // if node has a `next`
-          self.nextNode(node: node)
-        } else if let responses = node.responses { // if responses, show them
-          print("stm: current node \(self.currentNodeId), showing responses \(responses)")
-          self.setResponses(responses)
-        } else {
-          self.stopListeningLoop()
-        }
-      }
-    }
-  }
-  
-  func playAudio(node: Node) {
-    
-    self.audioStopped = false
-    
-    // play audio
-    if let audioPath = Bundle.main.path(forResource: "audio/\(node.id).mp3", ofType: nil) {
-      
-      // print("playing audio \(node.id).mp3")
-      let url = NSURL(fileURLWithPath: audioPath)
-      
-      do {
-        let audioFile = try AVAudioFile(forReading: url as URL)
-        
-        playerNode.scheduleFile(audioFile, at: nil, completionHandler: {
-          
-          if !self.audioStopped {
-            print("PLAYER NODE COMPLETION HANDLER HAHAHAHA")
-            self.goNext()
-          }
-          
-        })
-
-        playerNode.play()
-        
-      } catch let err as NSError {
-        print(err)
-      }
-      
-    } else { // audio file not found
-      // print("cannot find audio file for node \(node.id)")
-      
-      switch node.speaker.lowercased() {
-        case "h1", "h2", "picture":
-          delay(seconds: self.delayTitle) {
-            self.goNext()
-          }
-        default:
-          
-          delay(seconds: self.delayIfNoAudio) {
-            self.goNext()
-          }
-      }
-    }
     
   }
   
   override public func viewWillAppear(_ animated: Bool) {
     // called every time just before view is displayed/visible to user. always after viewDidLoad(). set up app state/view data here.
-    // print("stm: viewWillAppear()")
+    // print("viewWillAppear()")
     super.viewWillAppear(animated)
     
   }
   
   override public func viewDidLayoutSubviews() {
     // called after sizes (frames/bounds/etc) calculated. views already laid out by autolayout. handle anything dependent on bounds here.
-    // print("stm: viewDidLayoutSubviews()")
+    // print("viewDidLayoutSubviews()")
     super.viewDidLayoutSubviews()
     
     // set up response status light radius
@@ -254,7 +159,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
   
   override public func viewDidAppear(_ animated: Bool) {
     // view fully appears
-    // print("stm: viewDidAppear()")
+    // print("viewDidAppear()")
     
     resetAndInitializeStoryView(firstTime: true)
     
@@ -293,17 +198,40 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
   }
   
 
-  // MARK: SFSpeechRecognizerDelegate
+  // MARK: SPEECH RECOGNITION METHODS
 
   private func matchScore(bestGuess: String, node: Node) -> Int {
     // Fuzzy match between transcription and children
     let bestGuess = bestGuess.characters.split{$0 == " "}.map(String.init) // split into array
     let realWordsInGuess = bestGuess.filter{ $0.characters.count >= 3 } // remove any word less than 3 characters long
+    
+    // look at guess, filter FOR guess words that are in the transcript.
     let count = realWordsInGuess.filter({ (node.text.lowercased().range(of: $0.lowercased()) != nil) }).count
     
     return count
   }
   
+  func createMarkupIndices(bestGuess: String, node: Node) {
+    
+    let bestGuess = bestGuess.characters.split{$0 == " "}.map(String.init) // split into array
+    let realWordsInGuess = bestGuess.filter{ $0.characters.count >= 3 } // remove any word less than 3 characters long
+    
+    var shouldSave: [Int] = []
+    for (i, nodeWord) in node.text.lowercased().components(separatedBy: " ").enumerated() {
+      
+      if nodeWord.characters.count > 4 {
+        // check if it's in realWordsInGuess
+        let nodeWordCount = realWordsInGuess.filter { $0.range(of: nodeWord) != nil }.count
+        
+        if nodeWordCount == 0 {
+          print("word large and not in guess: \(nodeWord). index \(i)")
+          shouldSave.append(i)
+        }
+      }
+    }
+    print("shouldSave is \(shouldSave)")
+    self.markupIndices = shouldSave
+  }
   
   private func startListeningLoop() throws {
     print("startListeningLoop()")
@@ -330,7 +258,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
       if !self.recordingStopped { // if we're recording
         var isFinal = false
         
-        if let result = result, let currentNode = self.nodes[self.currentNodeId] {
+        if let result = result, let currentNode = self.story.nodes[self.story.currentNodeId] {
           let bestGuess = result.bestTranscription.formattedString
           print("best guess: \(bestGuess)")
           
@@ -338,14 +266,19 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
           
           // iterate through all responses and rank matchScores
           for (idx, responseId) in (currentNode.responses?.enumerated())! {
-            let responseNode = self.nodes[responseId]!
+            let responseNode = self.story.nodes[responseId]!
             let matchCount = self.matchScore(bestGuess: bestGuess, node: responseNode) // matchScore is the total number of words we've matched
+            
+            
             
             if highestMatch.matchCount < matchCount, highestMatch.index != idx { // this new dialog option is the best match so far
               
               highestMatch = (idx, matchCount)
               print("new highest match idx \(idx)")
               self.clearResponseHighlights()
+              
+              self.createMarkupIndices(bestGuess: bestGuess, node: responseNode)
+              
               // print("new highest match: \(responseNode.text)")
             }
           }
@@ -356,7 +289,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
           } else if highestMatch.matchCount >= 2 {
             print("at least 2 matches. random chatter index is \(randomChatterIdx)")
             let responseNodeId = currentNode.responses?[highestMatch.index!]
-            if let highlightedResponseNode: Node = self.nodes[responseNodeId!] {
+            if let highlightedResponseNode: Node = self.story.nodes[responseNodeId!] {
               // print("new highlight: " + highlightedResponseNode.text)
               // if our transcript length is approaching the length of the best guess dialog option, move along the dialog
               let dialogCount: Int = highlightedResponseNode.text.characters.count
@@ -429,23 +362,143 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
     self.recognitionTask = nil
 
   }
-  
 
-  /*
-  public func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
-    print("setting recordButton back to 'start recording'")
-    if available {
-        recordButton.isEnabled = true
-        recordButton.setTitle("Start Recording", for: [])
-    } else {
-        recordButton.isEnabled = false
-        recordButton.setTitle("Recognition not available", for: .disabled)
+
+  // MARK: scene controller and segue methods
+
+  func showSummaryScreen() {
+    
+    self.stopListeningLoop()
+    
+    self.playerNode.stop()
+    self.musicNode.stop()
+    self.stopBackgroundLoop()
+
+    
+    self.performSegue(withIdentifier: "showSummarySegue", sender: nil)
+
+  }
+
+  @IBAction func myUnwindAction(unwindSegue: UIStoryboardSegue) {
+    print("unwinding")
+    self.clearStoryScrollView()
+    
+  }
+  
+  override public func prepare(for segue: UIStoryboardSegue, sender: AnyObject?) {
+    
+    if segue.identifier == "showSummarySegue" {
+      let summaryViewController = segue.destination as! SummaryViewController
+      summaryViewController.score = Int(50 + arc4random_uniform(50)) // generate random int between 50 and 100
+      
     }
   }
-  */
+  
+
+  // MARK: story methods
+  
+  func clearStoryScrollView() {
+    print("clearing storyScrollView")
+    for subview in self.storyScrollView.subviews {
+      subview.removeFromSuperview()
+    }
+    // reset content inset
+    self.storyScrollView.contentInset = self.storyScrollViewDefaultInsets
+
+  }
+
+  func resetAndInitializeStoryView(firstTime: Bool = false) {
+    print("resetAndInitializeStoryView")
+    
+    // reset pause state    
+    self.paused = false
+    self.playButton.isHidden = true
+    self.pauseButton.isHidden = false
+
+    // stop audio, music, background loops
+
+    self.audioCompletionQueue = [:]
+    self.playerNode.stop()
+    self.musicNode.stop()
+    self.stopBackgroundLoop()
+
+
+    // clear storyScrollView
+    if !firstTime {
+      self.clearStoryScrollView()
+    }
+
+    // set responses off screen to animate onscreen in viewDidAppear()
+    responseStack.isHidden = true
+    recordingStatusLight.isHidden = true
+    recordingStatusLight.backgroundColor = self.grayColor
+    
+    // reset currentNodeId
+    self.story.currentNodeId = self.story.currentSceneStartingId
+    
+    // add first node to view
+    if let node = self.story.nodes[self.story.currentNodeId] {
+      self.processNode(node: node)
+    }
+  }
+
+  
+  // MARK: scroll methods
+
+  func setScrollBottomInset(amount: CGFloat, animated: Bool = true) {
+    print("setScrollBottomInset \(amount), animated \(animated)")
+    
+    if animated {
+
+      self.view.layoutIfNeeded()
+      UIView.animate(
+        withDuration: 0.5,
+        delay: 0.0,
+        options: [.curveEaseInOut],
+        animations: {
+          // add contentInset on bottom
+          self.storyScrollView.contentInset = UIEdgeInsets(top: 0.0, left: 0, bottom: amount, right: 0)
+          
+          // scroll it to bottom via contentOffset
+          self.scrollViewToBottom(animated: false)
+          
+          self.view.layoutIfNeeded()
+          
+        }, completion: nil)
+
+    } else {
+      // add content inset on bottom
+      self.storyScrollView.contentInset = UIEdgeInsets(top: 0.0, left: 0, bottom: amount, right: 0)
+      
+      // scroll it to bottom
+      self.scrollViewToBottom(animated: false)
+    }
+    
+  }
+
+  public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    // print("scrollViewDidScroll, offset is \(scrollView.contentOffset)")
+    if self.showingResponses {
+      // print("self.currentScrollOffset \(self.currentScrollOffset)")
+      // print(scrollView.contentOffset.y - self.currentScrollOffset)
+      let offset = scrollView.contentOffset.y - self.currentScrollOffset
+      
+      if offset < 0 {
+        // print("offset is \(offset)")
+        // print("responsestack y is \(self.responseStack.frame.origin.y)")
+        
+        self.responseStack.frame.origin.y = self.originalResponseStackY - offset
+        self.recordingStatusLight.frame.origin.y = self.originalResponseStackY - (16+12) - offset // light is 16px above responseStack and 12px high
+        // self.view.layoutIfNeeded()
+      } else {
+        self.responseStack.frame.origin.y = self.originalResponseStackY
+        self.recordingStatusLight.frame.origin.y = self.originalResponseStackY - (16+12) // light is 16px above responseStack and 12px high
+      } 
+    }
+  }
 
   func scrollViewToBottom(animated: Bool = true) {
-    print("scrolling to bottom, animated \(animated)")
+    // print("scrolling to bottom, animated \(animated)")
     let bottomOffset = storyScrollView.contentSize.height - storyScrollView.frame.size.height + storyScrollView.contentInset.bottom
     let bottomOffsetPt: CGPoint = CGPoint(x: 0, y: bottomOffset)
     
@@ -454,16 +507,57 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
       self.storyScrollView.setContentOffset(bottomOffsetPt, animated: animated)
     }
     
-
   }
   
-  func playMusic(_ filename: String) {
-    print("playing music \(filename)")
-    if let path = Bundle.main.path(forResource: "music/\(filename)", ofType: nil) {
+  // MARK: audio/music methods
+
+  func playAudio(node: Node, completionHandler: () -> Void = {}) {
+    
+    // play audio
+    if let path = Bundle.main.path(forResource: "\(node.id).mp3", ofType: nil) {
+      
       let url = NSURL(fileURLWithPath: path)
       do {
         let audioFile = try AVAudioFile(forReading: url as URL)
-        musicNode.scheduleFile(audioFile, at: nil, completionHandler: nil)
+        let audioFormat = audioFile.processingFormat
+
+        let audioFrameCount = UInt32(audioFile.length)
+        let audioFileBuffer = AVAudioPCMBuffer(pcmFormat: audioFormat, frameCapacity: audioFrameCount)
+        try audioFile.read(into: audioFileBuffer)
+        
+        self.playerNode.scheduleBuffer(audioFileBuffer, at: nil, completionHandler: {
+          // audio plays on different thread, need to run this code on main thread
+          DispatchQueue.main.async(execute: completionHandler)
+        })
+        
+        self.playerNode.play()
+      } catch let err as NSError {
+        print(err)
+      }
+    } else { // audio file not found
+      // print("cannot find audio file for node \(node.id)")
+      
+      switch node.speaker.lowercased() {
+        case "h1", "h2", "picture":
+          delay(seconds: self.delayTitle) {
+            self.goNext()
+          }
+        default:
+          
+          delay(seconds: self.delayIfNoAudio) {
+            self.goNext()
+          }
+      }
+    }
+  }
+
+  func playMusic(_ filename: String, completionHandler: () -> Void = {}) {
+    print("playing music \(filename)")
+    if let path = Bundle.main.path(forResource: "\(filename)", ofType: nil) {
+      let url = NSURL(fileURLWithPath: path)
+      do {
+        let audioFile = try AVAudioFile(forReading: url as URL)
+        musicNode.scheduleFile(audioFile, at: nil, completionHandler: completionHandler)
         musicNode.play()
         
       } catch let err as NSError {
@@ -483,14 +577,14 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
     if let path = Bundle.main.path(forResource: "music/\(filename)", ofType: nil) {
       let url = NSURL(fileURLWithPath: path)
       do {
-        print("setting up new buffer \(filename), path \(path), url \(url)")
+        // print("setting up new buffer \(filename), path \(path), url \(url)")
         let audioFile = try AVAudioFile(forReading: url as URL)
         let audioFormat = audioFile.processingFormat
         let audioFrameCount = UInt32(audioFile.length)
         let audioFileBuffer = AVAudioPCMBuffer(pcmFormat: audioFormat, frameCapacity: audioFrameCount)
         try audioFile.read(into: audioFileBuffer)
         
-        backgroundAudioNode.scheduleBuffer(audioFileBuffer, at: nil, options: .loops, completionHandler: nil)
+        self.backgroundAudioNode.scheduleBuffer(audioFileBuffer, at: nil, options: .loops, completionHandler: nil)
         self.backgroundAudioNode.play()
         self.backgroundFaderNode = FaderNode(playerNode: backgroundAudioNode)
         self.backgroundFaderNode?.fade(fromVolume: 0, toVolume: 0.1)
@@ -503,14 +597,17 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
   }
   
   func stopBackgroundLoop() {
-    print("stop bg loop")
+    // print("stop bg loop")
     self.backgroundFaderNode?.fadeOut() { finished in
       // self.backgroundAudioNode.stop()
     }
   }
 
+
+  // MARK: Node processing methods
+
   func processNode(node: Node) {
-    print("stm: processNode, node id \(node.id)")
+    // print("processNode, node id \(node.id)")
 
     switch node.speaker.lowercased() {
 
@@ -529,52 +626,46 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
         self.goNext()
         return
 
-      case "h1":
-
-        if self.currentNodeId != self.rootNodeId {
-          // if we're at a new scene, scroll all the way up
-          UIView.animate(
-            withDuration: 1.0,
-            animations: {
-              for subview in self.storyScrollView.subviews {
-                subview.alpha = 0.0
-              }
-            },
-            completion: {_ in
-              // scroll to new screen
-              self.setScrollBottomInset(amount: self.storyScrollView.frame.size.height, animated: false)
-              // fade all storytextviews back in
-              for subview in self.storyScrollView.subviews {
-                subview.alpha = 1.0
-              }
-
-              self.delay(seconds: self.delayBeforeNewScene) {
-                self.addStoryView(node: node)
-              }
-              
-            })
-
-          // sleep(5)
-        } else {
-          self.addStoryView(node: node)
-        }
-
       default:
         self.addStoryView(node: node)
 
     }
   }
   
-  func handleDoubleTap() {
-    print("double tapped")
-    self.playerNode.stop()
+  func goNext() {
+    if let node = self.story.nodes[self.story.currentNodeId] {
+      
+      if node.next != nil { // if node has a `next`
+        
+        if let nextNode = self.story.nodes[node.next!] {
+          self.processNode(node: nextNode)
+          self.story.currentNodeId = node.next! // set current node id
+          // print("current node id is \(self.currentNodeId)")
+        }
+
+      } else if let responses = node.responses { // if responses, show them
+
+        print("current node \(self.story.currentNodeId), showing responses \(responses)")
+        self.setResponses(responses)
+        
+      } else { // end of scene
+        self.delay(seconds: 2.0) {
+          self.showSummaryScreen()
+
+        }
+        
+      }
+    }
+    
   }
   
   // view functions
   func addStoryView(node: Node) {
-    print("stm: addStoryView, node id \(node.id)")
+    print("addStoryView, node id \(node.id)")
     
-    let textView = StoryTextView(text: node.text, speaker: node.speaker, id: node.id)
+    let textView = StoryTextView(text: node.text, speaker: node.speaker, id: node.id, markupIndices: self.markupIndices)
+    
+    self.markupIndices = []
     
     storyScrollView.addSubview(textView) 
     storyScrollView.setContentViewSize() // set proper storyScrollView size
@@ -602,7 +693,28 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
     textView.addGestureRecognizer(doubleTap)
 
     // now play audio and fade in the storytextview
-    self.playAudio(node: node)
+    
+    let timestamp = UInt64(floor(NSDate().timeIntervalSince1970*1000))
+    let audioCompletion = Completion(timestamp)
+    self.audioCompletionQueue[timestamp] = audioCompletion
+    
+    self.playAudio(node: node, completionHandler: {
+      print("play audio completion, timestamp \(timestamp)")
+      if let completion = self.audioCompletionQueue[timestamp] {
+        print("found it")
+        
+        if !completion.cancelled {
+          self.goNext()
+          completion.cancelled = true
+        } else {
+          print("completion \(timestamp) was found but cancelled")
+        }
+        
+      } else {
+        print("cannot find \(timestamp) in the queue")
+      }
+      
+    })
 
     UIView.animate(
       withDuration: 0.5,
@@ -614,101 +726,22 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
       completion: nil)
 
   }
-  
 
-  func createAttrString(text: String) ->  NSMutableAttributedString {
-    
-    let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
-    paragraphStyle.lineSpacing = 5
-    
-    let attrString = NSMutableAttributedString(
-      string: text,
-      attributes: [
-        NSFontAttributeName: UIFont(name: "Georgia", size: 16.0)!,
-        NSForegroundColorAttributeName: self.fadeGrayColor,
-        NSParagraphStyleAttributeName: paragraphStyle
-      ])
-    
-    return attrString
-    
-  }
-  
-  func clearResponseHighlights() {
-    print("clear response highlights")
-    let newAttrString = NSMutableAttributedString(attributedString: response1.attributedText)
-    print(response1.text.characters.count)
-    
-    newAttrString.addAttribute(
-      NSForegroundColorAttributeName,
-      value: self.fadeGrayColor,
-      range: NSMakeRange(0, response1.text.characters.count))
-    response1.attributedText = newAttrString
-    
-    let newAttrString2 = NSMutableAttributedString(attributedString: response2.attributedText)
-    newAttrString2.addAttribute(
-      NSForegroundColorAttributeName,
-      value: self.fadeGrayColor,
-      range: NSMakeRange(0, response2.text.characters.count))
-    response2.attributedText = newAttrString2
-    
-    let newAttrString3 = NSMutableAttributedString(attributedString: response3.attributedText)
-    newAttrString3.addAttribute(
-      NSForegroundColorAttributeName,
-      value: self.fadeGrayColor,
-      range: NSMakeRange(0, response3.text.characters.count))
-    response3.attributedText = newAttrString3
-    
-    
+  func handleDoubleTap() {
+    print("double tapped")
+    self.playerNode.stop()
   }
   
   
-  func setResponseHighlight(responseIdx: Int, count: Int) {
-    // print("set response highlight: idx \(responseIdx) count \(count)")
-    let range = NSMakeRange(0, count)
-    
-    switch responseIdx {
-      case 0:
-        let newAttrString = NSMutableAttributedString(attributedString: response1.attributedText)
-        newAttrString.addAttribute(
-          NSForegroundColorAttributeName,
-          value: self.lightGreenColor,
-          range: range)
-        
-        response1.attributedText = newAttrString
-      case 1:
-        let newAttrString = NSMutableAttributedString(attributedString: response2.attributedText)
-        newAttrString.addAttribute(
-          NSForegroundColorAttributeName,
-          value: self.lightGreenColor,
-          range: range)
-        response2.attributedText = newAttrString
-      case 2:
-        let newAttrString = NSMutableAttributedString(attributedString: response3.attributedText)
-        newAttrString.addAttribute(
-          NSForegroundColorAttributeName,
-          value: self.lightGreenColor,
-          range: range)
-        response3.attributedText = newAttrString
-      default:
-        ()
-    }
-
-  }
-
-  
+  // MARK: response-related methods
 
   func setResponses(_ responses: [Int]) {
     
     self.showingResponses = true
     
-    // start listening immediately, then animate responses in
-    if self.recordingStopped {
-      try! self.startListeningLoop()
-    }
-    
-    let response1Node = nodes[responses[0]]!
-    let response2Node = nodes[responses[1]]!
-    let response3Node = nodes[responses[2]]!
+    let response1Node = self.story.nodes[responses[0]]!
+    let response2Node = self.story.nodes[responses[1]]!
+    let response3Node = self.story.nodes[responses[2]]!
 
     response1.attributedText = createAttrString(text: response1Node.text)
     response2.attributedText = createAttrString(text: response2Node.text)
@@ -746,7 +779,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
     // animate responses back in
     UIView.animate(
       withDuration: 0.5,
-      delay: 0.5,
+      delay: 0,
       options: [.curveEaseInOut],
       animations: {
         
@@ -758,7 +791,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
     
     UIView.animate(
       withDuration: 0.5,
-      delay: 0.75,
+      delay: 0.25,
       options: [.curveEaseInOut],
       animations: {
         self.response2.frame.origin.y -= self.r2Translate
@@ -766,34 +799,100 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
     
     UIView.animate(
       withDuration: 0.5,
-      delay: 1,
+      delay: 0.5,
       options: [.curveEaseInOut],
       animations: {
         self.response3.frame.origin.y -= self.r3Translate
       }, 
-      completion: nil)
+      completion: {_ in
+        if self.recordingStopped {
+          try! self.startListeningLoop()
+        }
+      })
 
 
   }
+
+  func createAttrString(text: String) ->  NSMutableAttributedString {
+    
+    let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
+    paragraphStyle.lineSpacing = 5
+    
+    let attrString = NSMutableAttributedString(
+      string: text,
+      attributes: [
+        NSFontAttributeName: UIFont(name: "Georgia", size: 16.0)!,
+        NSForegroundColorAttributeName: self.fadeGrayColor,
+        NSParagraphStyleAttributeName: paragraphStyle
+      ])
+    
+    return attrString
+    
+  }
+
+  func clearResponseHighlights() {
+    print("clear response highlights")
+    let newAttrString = NSMutableAttributedString(attributedString: response1.attributedText)
+    print(response1.text.characters.count)
+    
+    newAttrString.addAttribute(
+      NSForegroundColorAttributeName,
+      value: self.fadeGrayColor,
+      range: NSMakeRange(0, response1.text.characters.count))
+    response1.attributedText = newAttrString
+    
+    let newAttrString2 = NSMutableAttributedString(attributedString: response2.attributedText)
+    newAttrString2.addAttribute(
+      NSForegroundColorAttributeName,
+      value: self.fadeGrayColor,
+      range: NSMakeRange(0, response2.text.characters.count))
+    response2.attributedText = newAttrString2
+    
+    let newAttrString3 = NSMutableAttributedString(attributedString: response3.attributedText)
+    newAttrString3.addAttribute(
+      NSForegroundColorAttributeName,
+      value: self.fadeGrayColor,
+      range: NSMakeRange(0, response3.text.characters.count))
+    response3.attributedText = newAttrString3
+    
+  }
   
-  func nextNode(node: Node) {
-    // print("stm: currently on node \(self.currentNodeId), going to next!")
-    if let nextNode = self.nodes[node.next!] {
-      
-      self.processNode(node: nextNode)
-      self.currentNodeId = node.next! // set current node id
-      // print("stm: current node id is \(self.currentNodeId)")
+  func setResponseHighlight(responseIdx: Int, count: Int) {
+    // print("set response highlight: idx \(responseIdx) count \(count)")
+    let range = NSMakeRange(0, count)
+    
+    switch responseIdx {
+      case 0:
+        let newAttrString = NSMutableAttributedString(attributedString: response1.attributedText)
+        newAttrString.addAttribute(
+          NSForegroundColorAttributeName,
+          value: self.lightGreenColor,
+          range: range)
+        
+        response1.attributedText = newAttrString
+      case 1:
+        let newAttrString = NSMutableAttributedString(attributedString: response2.attributedText)
+        newAttrString.addAttribute(
+          NSForegroundColorAttributeName,
+          value: self.lightGreenColor,
+          range: range)
+        response2.attributedText = newAttrString
+      case 2:
+        let newAttrString = NSMutableAttributedString(attributedString: response3.attributedText)
+        newAttrString.addAttribute(
+          NSForegroundColorAttributeName,
+          value: self.lightGreenColor,
+          range: range)
+        response3.attributedText = newAttrString
+      default:
+        ()
     }
-
   }
 
-  
   func responseSelectedByAudio(node: Node) {
     self.showingResponses = false
-    self.currentNodeId = node.id // advance currentNode forward
+    self.story.currentNodeId = node.id // advance currentNode forward
     self.stopListeningLoop()
-
-    
 
     UIView.animate(
       withDuration: 0.5,
@@ -877,7 +976,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
         self.response2.frame.origin.y -= self.r2Translate
         self.response3.frame.origin.y -= self.r3Translate
         
-        // print("stm: selected response # \(sender.tag!)")
+        // print("selected response # \(sender.tag!)")
         var responseId = 1
         switch(sender.tag) {
           case 1:
@@ -891,9 +990,9 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
         }
 
 
-        if let responseNode = self.nodes[responseId] {
+        if let responseNode = self.story.nodes[responseId] {
           // add response to story
-          self.currentNodeId = responseId // advance currentNode forward
+          self.story.currentNodeId = responseId // advance currentNode forward
           self.processNode(node: responseNode)
         }
         
@@ -901,6 +1000,9 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
     
   }
   
+
+  // MARK: IBAction methods for interface
+
   @IBAction func restartButtonTapped() {
     print("restarting")
     self.stopListeningLoop()
@@ -909,7 +1011,6 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
   }
   
   @IBAction func pauseButtonTapped() {
-    
     
     if !self.paused {
       print("pausing")
@@ -923,7 +1024,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
       self.backgroundAudioNode.pause()
       
       // stop listening
-      if let node = self.nodes[self.currentNodeId], let responses = node.responses {
+      if let node = self.story.nodes[self.story.currentNodeId] {
         print("node has responses, stop listening")
         self.stopListeningLoop()
       }
@@ -942,7 +1043,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
       self.backgroundAudioNode.play()
       
       // resume listening
-      if let node = self.nodes[self.currentNodeId], let responses = node.responses {
+      if let node = self.story.nodes[self.story.currentNodeId], let responses = node.responses {
         print("node has responses, start listening")
         if self.recordingStopped {
           try! self.startListeningLoop()
@@ -954,82 +1055,14 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
   }
 
   @IBAction func butanButtonTapped() {
-    print("skip node")
-    self.playerNode.stop()
+    print("butan tapped")
+    performSegue(withIdentifier: "showSummarySegue", sender: nil)
+
   }
   
-  func setScrollBottomInset(amount: CGFloat, animated: Bool = true) {
-    print("setScrollBottomInset \(amount), animated \(animated)")
-    
-    if animated {
-
-      self.view.layoutIfNeeded()
-      UIView.animate(
-        withDuration: 0.5,
-        delay: 0.0,
-        options: [.curveEaseInOut],
-        animations: {
-          // add contentInset on bottom
-          self.storyScrollView.contentInset = UIEdgeInsets(top: 0.0, left: 0, bottom: amount, right: 0)
-          
-          // scroll it to bottom via contentOffset
-          self.scrollViewToBottom(animated: false)
-          
-          self.view.layoutIfNeeded()
-          
-        }, completion: nil)
-
-    } else {
-      // add content inset on bottom
-      self.storyScrollView.contentInset = UIEdgeInsets(top: 0.0, left: 0, bottom: amount, right: 0)
-      
-      // scroll it to bottom
-      self.scrollViewToBottom(animated: false)
-    }
-    
-  }
   
-  func resetAndInitializeStoryView(firstTime: Bool = false) {
-    print("resetAndInitializeStoryView")
-    
-    // reset pause state    
-    self.paused = false
-    self.playButton.isHidden = true
-    self.pauseButton.isHidden = false
+  // MARK: utility methods
 
-    // stop audio, music, background loops
-    self.audioStopped = true
-    self.playerNode.stop()
-    self.musicNode.stop()
-    self.stopBackgroundLoop()
-
-
-    // clear storyScrollView
-    if !firstTime {
-      for subview in storyScrollView.subviews {
-        subview.removeFromSuperview()
-      }
-      // reset content inset
-      self.storyScrollView.contentInset = self.storyScrollViewDefaultInsets
-
-    }
-
-    // set responses off screen to animate onscreen in viewDidAppear()
-    responseStack.isHidden = true
-    recordingStatusLight.isHidden = true
-    recordingStatusLight.backgroundColor = self.grayColor
-    
-    // reset currentNodeId
-    self.currentNodeId = self.rootNodeId
-    
-    // add first node to view
-    if let node = self.nodes[self.currentNodeId] {
-      self.processNode(node: node)
-    }
-  }
-
-  
-  // A delay function
   func delay(seconds: Double, completion:()->()) {
     let popTime = DispatchTime.now() + Double(Int64( Double(NSEC_PER_SEC) * seconds )) / Double(NSEC_PER_SEC)
     
@@ -1038,83 +1071,6 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate, UIScr
     }
   }
 
-  func constructNodesDict(_ dataArr: [String]) {
-    for line in dataArr {
-      let id: Int = Int(line.components(separatedBy: ":")[0].trimmingCharacters(in: CharacterSet.whitespaces))!
-      // print("stm: got id: \(id)")
-      // let id = line.characters.split {$0 == ":"}.map(String.init)[0]
-      var message: String = line // start message off with full line, will cut down to real message
-      
-      // cut starting id
-      message = message.components(separatedBy: ":")[1].trimmingCharacters(in: CharacterSet.whitespaces)
-      
-      if let arrowRange = message.range(of: "->") { // check for 'next'
-        // extract next int
-        let next: Int = Int(message.substring(from: arrowRange.upperBound).trimmingCharacters(in: CharacterSet.whitespaces))!
-        // print("stm: got next: \(next)")
-        
-        // extract message + speaker
-        message = message.substring(to: arrowRange.lowerBound).trimmingCharacters(in: CharacterSet.whitespaces)
-        
-        if let parenIdx = message.range(of: ")") {
-          let speaker = message.substring(to: parenIdx.upperBound).trimmingCharacters(in: CharacterSet.init(charactersIn: "()"))
-          // print("stm: got speaker: \(speaker)")
-          
-          message = message.substring(from: parenIdx.upperBound).trimmingCharacters(in: CharacterSet.whitespaces)
-          // print("stm: message: \(message)")
-          
-          // create the node and add to self.nodes
-          nodes[id] = Node(
-            id: id,
-            text: message,
-            speaker: speaker,
-            next: next
-          )
-          
-        }
-        
-      } else if let responseIdx = message.range(of: "[") { // check for responses
-        // extract responses array
-        let responses = message.substring(from: responseIdx.upperBound).trimmingCharacters(in: CharacterSet.init(charactersIn: "[]")).components(separatedBy: ",")
-        let responsesArr = responses.map { Int($0.trimmingCharacters(in: CharacterSet.whitespaces))! }
-        // print("stm: got responses: \(responses)")
-        
-        // extract message + speaker
-        message = message.substring(to: responseIdx.lowerBound).trimmingCharacters(in: CharacterSet.whitespaces)
-        
-        if let parenIdx = message.range(of: ")") {
-          let speaker = message.substring(to: parenIdx.upperBound).trimmingCharacters(in: CharacterSet.init(charactersIn: "()"))
-          // print("stm: got speaker: \(speaker)")
-          
-          message = message.substring(from: parenIdx.upperBound).trimmingCharacters(in: CharacterSet.whitespaces)
-          // print("stm: message: \(message)")
-          
-          // create the node and add to self.nodes
-          nodes[id] = Node(
-            id: id,
-            text: message,
-            speaker: speaker,
-            responses: responsesArr
-          )
-        }
-      } else { // end of story
-        if let parenIdx = message.range(of: ")") {
-          let speaker = message.substring(to: parenIdx.upperBound).trimmingCharacters(in: CharacterSet.init(charactersIn: "()"))
-          // print("stm: got speaker: \(speaker)")
-          
-          message = message.substring(from: parenIdx.upperBound).trimmingCharacters(in: CharacterSet.whitespaces)
-          // print("stm: message: \(message)")
-          
-          // create the node and add to self.nodes
-          nodes[id] = Node(
-            id: id,
-            text: message,
-            speaker: speaker
-          )
-        }
-      }
-      // print("stm: --")
-    }
-  }
+  
 }
 

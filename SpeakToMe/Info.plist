@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>JustSpeak</string>
+	<string>Conversations</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -25,9 +25,18 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Your microphone will be used to record your speech when you press the "Start Recording" button.</string>
+	<string>Your microphone will be used to record your speech when you press the &quot;Start Recording&quot; button.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Speech recognition will be used to determine which words you speak into this device's microphone.</string>
+	<string>Speech recognition will be used to determine which words you speak into this device&apos;s microphone.</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>AtlasGrotesk-Thin.otf</string>
+		<string>AtlasGrotesk-Light.otf</string>
+		<string>AtlasGrotesk-Regular.otf</string>
+		<string>AtlasGrotesk-Medium.otf</string>
+		<string>AtlasGrotesk-RegularItalic.otf</string>
+		<string>AtlasGrotesk-LightItalic.otf</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
